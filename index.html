@@ -119,21 +119,63 @@
       <button class="modal-close" style="position:static" onclick="closeScan()">✕</button>
     </div>
     <div class="scan-body">
-      <p class="scan-sub">Upload a photo of your room <strong>or describe it below</strong>. Our AI analyses the colours, lighting, and style to recommend perfect artworks for your space.</p>
-      <label class="upload-zone" id="uploadZone">
-        <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">Drop a photo here or click to browse</div>
-        <div class="upload-sub">JPG, PNG, HEIC · Max 10MB</div>
-      </label>
+      <p class="scan-sub">Point your camera at your room — we'll read the colours and light to find artworks that fit perfectly.</p>
+
+      <!-- CAMERA VIEWFINDER -->
+      <div class="camera-zone" id="cameraZone">
+        <div class="camera-idle" id="cameraIdle">
+          <div class="camera-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+          <div class="camera-idle-text">Tap to open camera</div>
+          <div class="camera-idle-sub">or upload a photo below</div>
+          <button class="btn-primary camera-start-btn" onclick="startCamera()">Open Camera</button>
+        </div>
+        <video id="cameraFeed" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover;border-radius:4px"></video>
+        <canvas id="cameraCanvas" style="display:none"></canvas>
+        <div class="camera-controls" id="cameraControls" style="display:none">
+          <button class="cam-btn cam-flip" onclick="flipCamera()" title="Flip camera">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+          </button>
+          <button class="cam-btn cam-capture" onclick="captureFrame()" title="Capture">
+            <div class="capture-ring"></div>
+          </button>
+          <button class="cam-btn cam-close" onclick="stopCamera()" title="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="camera-corner tl"></div>
+        <div class="camera-corner tr"></div>
+        <div class="camera-corner bl"></div>
+        <div class="camera-corner br"></div>
+        <div id="capturedPreview" style="display:none;position:absolute;inset:0"></div>
+      </div>
+
+      <!-- COLOUR SWATCHES (shown after capture) -->
+      <div id="colourReadout" style="display:none">
+        <div class="colour-readout-label">Colours detected in your room</div>
+        <div class="swatch-row" id="swatchRow"></div>
+        <div class="colour-names" id="colourNames"></div>
+      </div>
+
+      <!-- UPLOAD FALLBACK -->
+      <div class="upload-fallback">
+        <div class="upload-fallback-label">Or upload a photo</div>
+        <label class="upload-zone-small" id="uploadZone">
+          <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
+          <span>📎 Choose file</span>
+        </label>
+      </div>
+
+      <!-- TEXT DESCRIBE -->
       <div class="room-form">
         <label for="roomTextarea">Or describe your room</label>
-        <textarea class="room-textarea" id="roomTextarea" placeholder="e.g. A bright living room with white walls, wooden floors, a navy sofa, and large south-facing windows. The main wall is about 3 metres wide. Style is Scandi-minimalist."></textarea>
-        <div class="room-hint">The more detail you give, the better the recommendations.</div>
+        <textarea class="room-textarea" id="roomTextarea" placeholder="e.g. White walls, oak floor, grey sofa, lots of natural light…"></textarea>
       </div>
+
       <div class="scan-actions-row">
-        <button class="btn-outline" onclick="useDemoRoom()">✦ Use demo room</button>
-        <button class="btn-primary" onclick="runRecommendation()">Get recommendations →</button>
+        <button class="btn-outline" onclick="useDemoRoom()">✦ Demo room</button>
+        <button class="btn-primary" onclick="runRecommendation()">Find artworks →</button>
       </div>
       <div id="scanOutput"></div>
     </div>
@@ -172,26 +214,26 @@
 
 <script>
 const ARTWORKS = [
-  {id:1,  title:"Girl with a ball",        artist:"Miguel Guía", style:"abstract",  price:58,  img:"1_great_wave.jpg",    bg:"bg-cool",  initials:"MG", avClass:"av-blue",   size:"120×90cm",  year:2019, medium:"Sculpture: bronze, metal",              tags:["ocean","movement","blue"],        desc:"Layered washes of cobalt and cerulean evoke the rhythm of deep-sea currents. Marchetti's gestural marks dissolve at the edges, creating a sense of perpetual motion.",             platforms:[{name:"SHAART",price:58,note:"Free delivery"},{name:"ArtFinder",price:72,note:"+ £15 shipping"},{name:"Rise Art",price:65,note:"3-month min"}], moods:["calm","serene","fluid","dreamy","meditative"],           colours:["blue","cobalt","cerulean","navy","teal","cool","grey"],         lighting:["soft","diffused","cool"],   energy:"low",    subjects:["ocean","water","sea","wave","abstract"]},
-  {id:2,  title:"Silver Lace Panther",   artist:"Richard Orlinski",     style:"landscape", price:72,  img:"2_wheat_field.jpg",   bg:"bg-earth", initials:"RO", avClass:"av-green",  size:"100×80cm",  year:1889, medium:"Acrylic on linen",           tags:["forest","warm","golden"],         desc:"Warm amber light filters through a stand of scots pines at dusk. Osei captures that brief, charged moment when the world is entirely gilded.",                                   platforms:[{name:"SHAART",price:72,note:"Free delivery"},{name:"ArtFinder",price:88,note:"+ £15 shipping"},{name:"Rise Art",price:79,note:"3-month min"}], moods:["warm","cosy","romantic","nostalgic","inviting"],         colours:["gold","amber","orange","warm","brown","rust","yellow","earth"],lighting:["warm","golden","dusk"],     energy:"medium", subjects:["forest","trees","nature","landscape","woodland"]},
-  {id:3,  title:"BLOOMING BURST",     artist:"Utagawa Hiroshige",    style:"minimal",   price:34,  img:"3_plum_park.jpg",     bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"60×80cm",   year:1857, medium:"Ink on paper",               tags:["minimal","ink","calm"],           desc:"A single brushstroke — seemingly effortless, yet the result of years of practice. Tanaka explores what can be communicated by what is left absent.",                             platforms:[{name:"SHAART",price:34,note:"Free delivery"},{name:"ArtFinder",price:45,note:"+ £10 shipping"},{name:"Rise Art",price:40,note:"3-month min"}], moods:["calm","quiet","zen","meditative","serene","focused"],    colours:["white","grey","beige","cream","neutral","pale","muted"],        lighting:["natural","soft","neutral"], energy:"low",    subjects:["minimal","abstract","brushstroke","line"]},
-  {id:4,  title:"AFTERNOON STROLL",       artist:"Henri Fantin-Latour",   style:"minimal", price:42,  img:"4_still_life.jpg",    bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"50×70cm",   year:1865, medium:"Watercolour",                tags:["botanical","green","nature"],     desc:"Diallo's meticulous watercolour study captures every vein and shadow of a mature shield fern. Scientific precision meets painterly sensitivity.",                                 platforms:[{name:"SHAART",price:42,note:"Free delivery"},{name:"ArtFinder",price:55,note:"+ £10 shipping"},{name:"Rise Art",price:48,note:"3-month min"}], moods:["fresh","calm","natural","organic","peaceful"],           colours:["green","sage","moss","forest","olive","leaf","nature"],        lighting:["natural","soft","cool"],    energy:"low",    subjects:["botanical","plant","fern","leaf","nature","garden"]},
-  {id:5,  title:"GOLDEN HARMONY",      artist:"Piet Mondrian",   style:"abstract",  price:48,  img:"5_mondrian.jpg",      bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"80×80cm",   year:1930, medium:"Digital print on aluminium", tags:["geometric","primary","bold"],     desc:"Interlocking hexagonal forms cast complex shadows across a pale field. Hoffmann is interested in the hidden mathematical order beneath city structures.",                         platforms:[{name:"SHAART",price:48,note:"Free delivery"},{name:"ArtFinder",price:60,note:"+ £12 shipping"},{name:"Rise Art",price:54,note:"3-month min"}], moods:["bold","modern","graphic","intellectual","cool"],         colours:["red","blue","yellow","white","primary","bold"],                lighting:["cool","artificial"],        energy:"medium", subjects:["geometric","pattern","abstract","grid"]},
-  {id:6,  title:"Rocks and Mirror Square II",      artist:"Mary Cassatt",    style:"portrait",  price:85,  img:"6_childs_bath.jpg",    bg:"bg-earth", initials:"SR", avClass:"av-rust",   size:"70×90cm",   year:1893, medium:"Oil on canvas",              tags:["portrait","warm","intimate"],     desc:"A figure absorbed in a book, lit by soft morning window light. Reyes paints human interiority with quiet reverence — no face, just light and concentration.",                   platforms:[{name:"SHAART",price:85,note:"Free delivery"},{name:"ArtFinder",price:100,note:"+ £15 shipping"},{name:"Rise Art",price:92,note:"3-month min"}],moods:["warm","intimate","cosy","thoughtful","homely"],          colours:["warm","amber","tan","brown","cream","gold","terracotta"],      lighting:["warm","morning","window"],  energy:"low",    subjects:["figure","portrait","person","reading","interior"]},
-  {id:7,  title:"Nailed it Series No.81",      artist:"Caspar David Friedrich",     style:"landscape", price:96,  img:"7_wanderer.jpg",      bg:"bg-warm",  initials:"JO", avClass:"av-green",  size:"140×70cm",  year:1818, medium:"Oil on linen",               tags:["landscape","vast","muted"],       desc:"An expansive panorama of Bolivian salt flats at midday. The reflective white surface merges seamlessly with a bleached sky — horizon dissolved.",                                platforms:[{name:"SHAART",price:96,note:"Free delivery"},{name:"ArtFinder",price:115,note:"+ £18 shipping"},{name:"Rise Art",price:105,note:"3-month min"}],moods:["vast","calm","minimalist","serene","contemplative"],     colours:["white","grey","pale","silver","muted","neutral","beige"],       lighting:["bright","midday","bleached"],energy:"low",   subjects:["landscape","horizon","sky","flat","open","nature"]},
-  {id:8,  title:"Juok Sculpture", artist:"Chandler McLellan",   style:"botanical", price:38,  img:"8_irises.jpg",        bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"60×60cm",   year:1889, medium:"Gouache on paper",            tags:["botanical","purple","floral"],    desc:"An explosion of chrysanthemum petals rendered in dense, joyful gouache. Each petal individually considered; the whole radiantly exuberant.",                                    platforms:[{name:"SHAART",price:38,note:"Free delivery"},{name:"ArtFinder",price:50,note:"+ £10 shipping"},{name:"Rise Art",price:44,note:"3-month min"}], moods:["joyful","playful","romantic","feminine","vibrant"],      colours:["purple","blue","green","violet","floral","rich"],              lighting:["soft","warm","bright"],     energy:"high",   subjects:["botanical","flower","floral","iris","bloom"]},
-  {id:9,  title:"Le Baiser",       artist:"Robert Delaunay",   style:"abstract",  price:44,  img:"9_premier_disque.jpg", bg:"bg-earth", initials:"KH", avClass:"av-purple", size:"60×60cm",   year:1913, medium:"Acrylic on board",            tags:["geometric","colour","circular"],  desc:"Seven concentric ellipses, each offset by a few degrees, generate a mesmerising sense of rotation from a completely static composition.",                                        platforms:[{name:"SHAART",price:44,note:"Free delivery"},{name:"ArtFinder",price:56,note:"+ £10 shipping"},{name:"Rise Art",price:50,note:"3-month min"}], moods:["warm","ordered","calm","graphic","precise"],             colours:["red","blue","yellow","green","primary","vibrant"],             lighting:["warm","natural"],           energy:"medium", subjects:["geometric","circle","concentric","abstract","colour"]},
+  {id:1,  title:"The Great Wave off Kanagawa",        artist:"Katsushika Hokusai", style:"abstract",  price:58,  img:"1_great_wave.jpg",    bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"120×90cm",  year:1831, medium:"Oil on canvas",              tags:["ocean","movement","blue"],        desc:"Layered washes of cobalt and cerulean evoke the rhythm of deep-sea currents. Marchetti's gestural marks dissolve at the edges, creating a sense of perpetual motion.",             platforms:[{name:"SHAART",price:58,note:"Free delivery"},{name:"ArtFinder",price:72,note:"+ £15 shipping"},{name:"Rise Art",price:65,note:"3-month min"}], moods:["calm","serene","fluid","dreamy","meditative"],           colours:["blue","cobalt","cerulean","navy","teal","cool","grey"],         lighting:["soft","diffused","cool"],   energy:"low",    subjects:["ocean","water","sea","wave","abstract"]},
+  {id:2,  title:"Wheat Field with Cypresses",   artist:"Vincent van Gogh",     style:"landscape", price:72,  img:"2_wheat_field.jpg",   bg:"bg-earth", initials:"JO", avClass:"av-green",  size:"100×80cm",  year:1889, medium:"Acrylic on linen",           tags:["forest","warm","golden"],         desc:"Warm amber light filters through a stand of scots pines at dusk. Osei captures that brief, charged moment when the world is entirely gilded.",                                   platforms:[{name:"SHAART",price:72,note:"Free delivery"},{name:"ArtFinder",price:88,note:"+ £15 shipping"},{name:"Rise Art",price:79,note:"3-month min"}], moods:["warm","cosy","romantic","nostalgic","inviting"],         colours:["gold","amber","orange","warm","brown","rust","yellow","earth"],lighting:["warm","golden","dusk"],     energy:"medium", subjects:["forest","trees","nature","landscape","woodland"]},
+  {id:3,  title:"Plum Park in Kameido",     artist:"Utagawa Hiroshige",    style:"minimal",   price:34,  img:"3_plum_park.jpg",     bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"60×80cm",   year:1857, medium:"Ink on paper",               tags:["minimal","ink","calm"],           desc:"A single brushstroke — seemingly effortless, yet the result of years of practice. Tanaka explores what can be communicated by what is left absent.",                             platforms:[{name:"SHAART",price:34,note:"Free delivery"},{name:"ArtFinder",price:45,note:"+ £10 shipping"},{name:"Rise Art",price:40,note:"3-month min"}], moods:["calm","quiet","zen","meditative","serene","focused"],    colours:["white","grey","beige","cream","neutral","pale","muted"],        lighting:["natural","soft","neutral"], energy:"low",    subjects:["minimal","abstract","brushstroke","line"]},
+  {id:4,  title:"Still Life with Flowers and Fruit",       artist:"Henri Fantin-Latour",   style:"botanical", price:42,  img:"4_still_life.jpg",    bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"50×70cm",   year:1865, medium:"Watercolour",                tags:["botanical","green","nature"],     desc:"Diallo's meticulous watercolour study captures every vein and shadow of a mature shield fern. Scientific precision meets painterly sensitivity.",                                 platforms:[{name:"SHAART",price:42,note:"Free delivery"},{name:"ArtFinder",price:55,note:"+ £10 shipping"},{name:"Rise Art",price:48,note:"3-month min"}], moods:["fresh","calm","natural","organic","peaceful"],           colours:["green","sage","moss","forest","olive","leaf","nature"],        lighting:["natural","soft","cool"],    energy:"low",    subjects:["botanical","plant","fern","leaf","nature","garden"]},
+  {id:5,  title:"Composition II in Red Blue and Yellow",      artist:"Piet Mondrian",   style:"abstract",  price:48,  img:"5_mondrian.jpg",      bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"80×80cm",   year:1930, medium:"Digital print on aluminium", tags:["geometric","primary","bold"],     desc:"Interlocking hexagonal forms cast complex shadows across a pale field. Hoffmann is interested in the hidden mathematical order beneath city structures.",                         platforms:[{name:"SHAART",price:48,note:"Free delivery"},{name:"ArtFinder",price:60,note:"+ £12 shipping"},{name:"Rise Art",price:54,note:"3-month min"}], moods:["bold","modern","graphic","intellectual","cool"],         colours:["red","blue","yellow","white","primary","bold"],                lighting:["cool","artificial"],        energy:"medium", subjects:["geometric","pattern","abstract","grid"]},
+  {id:6,  title:"The Child's Bath",      artist:"Mary Cassatt",    style:"portrait",  price:85,  img:"6_childs_bath.jpg",    bg:"bg-earth", initials:"SR", avClass:"av-rust",   size:"70×90cm",   year:1893, medium:"Oil on canvas",              tags:["portrait","warm","intimate"],     desc:"A figure absorbed in a book, lit by soft morning window light. Reyes paints human interiority with quiet reverence — no face, just light and concentration.",                   platforms:[{name:"SHAART",price:85,note:"Free delivery"},{name:"ArtFinder",price:100,note:"+ £15 shipping"},{name:"Rise Art",price:92,note:"3-month min"}],moods:["warm","intimate","cosy","thoughtful","homely"],          colours:["warm","amber","tan","brown","cream","gold","terracotta"],      lighting:["warm","morning","window"],  energy:"low",    subjects:["figure","portrait","person","reading","interior"]},
+  {id:7,  title:"Wanderer above the Sea of Fog",      artist:"Caspar David Friedrich",     style:"landscape", price:96,  img:"7_wanderer.jpg",      bg:"bg-warm",  initials:"JO", avClass:"av-green",  size:"140×70cm",  year:1818, medium:"Oil on linen",               tags:["landscape","vast","muted"],       desc:"An expansive panorama of Bolivian salt flats at midday. The reflective white surface merges seamlessly with a bleached sky — horizon dissolved.",                                platforms:[{name:"SHAART",price:96,note:"Free delivery"},{name:"ArtFinder",price:115,note:"+ £18 shipping"},{name:"Rise Art",price:105,note:"3-month min"}],moods:["vast","calm","minimalist","serene","contemplative"],     colours:["white","grey","pale","silver","muted","neutral","beige"],       lighting:["bright","midday","bleached"],energy:"low",   subjects:["landscape","horizon","sky","flat","open","nature"]},
+  {id:8,  title:"Irises", artist:"Vincent van Gogh",   style:"botanical", price:38,  img:"8_irises.jpg",        bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"60×60cm",   year:1889, medium:"Gouache on paper",            tags:["botanical","purple","floral"],    desc:"An explosion of chrysanthemum petals rendered in dense, joyful gouache. Each petal individually considered; the whole radiantly exuberant.",                                    platforms:[{name:"SHAART",price:38,note:"Free delivery"},{name:"ArtFinder",price:50,note:"+ £10 shipping"},{name:"Rise Art",price:44,note:"3-month min"}], moods:["joyful","playful","romantic","feminine","vibrant"],      colours:["purple","blue","green","violet","floral","rich"],              lighting:["soft","warm","bright"],     energy:"high",   subjects:["botanical","flower","floral","iris","bloom"]},
+  {id:9,  title:"Premier Disque",       artist:"Robert Delaunay",   style:"abstract",  price:44,  img:"9_premier_disque.jpg", bg:"bg-earth", initials:"KH", avClass:"av-purple", size:"60×60cm",   year:1913, medium:"Acrylic on board",            tags:["geometric","colour","circular"],  desc:"Seven concentric ellipses, each offset by a few degrees, generate a mesmerising sense of rotation from a completely static composition.",                                        platforms:[{name:"SHAART",price:44,note:"Free delivery"},{name:"ArtFinder",price:56,note:"+ £10 shipping"},{name:"Rise Art",price:50,note:"3-month min"}], moods:["warm","ordered","calm","graphic","precise"],             colours:["red","blue","yellow","green","primary","vibrant"],             lighting:["warm","natural"],           energy:"medium", subjects:["geometric","circle","concentric","abstract","colour"]},
   {id:10, title:"The Kiss",        artist:"Gustav Klimt",    style:"abstract",  price:110, img:"10_kiss.jpg",         bg:"bg-warm",  initials:"SR", avClass:"av-rust",   size:"90×110cm",  year:1908, medium:"Oil on canvas",              tags:["abstract","gold","bold"],         desc:"An interior space rendered in cadmium reds and earth tones. Architecture dissolves into pure chromatic experience. Bold, unapologetic, transformative.",                         platforms:[{name:"SHAART",price:110,note:"Free delivery"},{name:"ArtFinder",price:130,note:"+ £18 shipping"},{name:"Rise Art",price:120,note:"3-month min"}],moods:["bold","dramatic","passionate","powerful","energetic"],   colours:["gold","amber","orange","warm","rich","luxury"],                lighting:["warm","dramatic","intense"],energy:"high",   subjects:["figures","love","embrace","gold","ornamental"]},
-  {id:11, title:" Le canoé ",           artist:"Jean-Philippe Berger",    style:"minimal",   price:28,  img:"11_nocturne.jpg",     bg:"bg-cool",  initials:"YT", avClass:"av-rust",   size:"50×60cm",   year:1875, medium:"Graphite on paper",           tags:["minimal","night","dark"],         desc:"Two hand-drawn graphite lines, imperfectly parallel. In their near-symmetry lies a meditation on tension, harmony, and the limits of human precision.",                         platforms:[{name:"SHAART",price:28,note:"Free delivery"},{name:"ArtFinder",price:38,note:"+ £8 shipping"},{name:"Rise Art",price:33,note:"3-month min"}],  moods:["quiet","zen","focused","calm","mysterious"],             colours:["black","dark","gold","night","deep","smoke"],                  lighting:["night","artificial","dim"], energy:"low",    subjects:["night","fireworks","dark","atmosphere"]},
-  {id:12, title:"Kringelment_Purple",         artist:"Selçuk Dizlek",style:"landscape", price:78,  img:"12_rain_steam.jpg",   bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"110×80cm",  year:1844, medium:"Oil on canvas",              tags:["landscape","atmospheric","light"],desc:"A misty estuary at dawn — reeds emerging ghost-like from silver fog. Marchetti eliminates detail to distil pure atmosphere and quietude.",                                      platforms:[{name:"SHAART",price:78,note:"Free delivery"},{name:"ArtFinder",price:95,note:"+ £15 shipping"},{name:"Rise Art",price:85,note:"3-month min"}], moods:["atmospheric","mysterious","calm","moody","poetic"],      colours:["golden","amber","warm","mist","light","haze"],                 lighting:["soft","diffused","golden"],  energy:"medium", subjects:["train","bridge","rain","speed","atmosphere"]},
-  {id:13, title:"Woodland Dreams",      artist:"Kamo Atoyan",   style:"botanical", price:55,  img:"13_exotic.jpg",       bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"70×90cm",   year:1910, medium:"Watercolour",                tags:["botanical","tropical","green"],   desc:"Backlit monstera leaves cast overlapping shadows. Diallo is fascinated by how light transforms the familiar into the otherworldly.",                                              platforms:[{name:"SHAART",price:55,note:"Free delivery"},{name:"ArtFinder",price:68,note:"+ £12 shipping"},{name:"Rise Art",price:62,note:"3-month min"}], moods:["fresh","tropical","natural","vibrant","lively"],         colours:["green","emerald","jade","tropical","leaf","nature"],           lighting:["bright","backlit","warm"],  energy:"medium", subjects:["botanical","leaf","plant","tropical","jungle"]},
+  {id:11, title:"Nocturne in Black and Gold",           artist:"James McNeill Whistler",    style:"minimal",   price:28,  img:"11_nocturne.jpg",     bg:"bg-cool",  initials:"YT", avClass:"av-rust",   size:"50×60cm",   year:1875, medium:"Graphite on paper",           tags:["minimal","night","dark"],         desc:"Two hand-drawn graphite lines, imperfectly parallel. In their near-symmetry lies a meditation on tension, harmony, and the limits of human precision.",                         platforms:[{name:"SHAART",price:28,note:"Free delivery"},{name:"ArtFinder",price:38,note:"+ £8 shipping"},{name:"Rise Art",price:33,note:"3-month min"}],  moods:["quiet","zen","focused","calm","mysterious"],             colours:["black","dark","gold","night","deep","smoke"],                  lighting:["night","artificial","dim"], energy:"low",    subjects:["night","fireworks","dark","atmosphere"]},
+  {id:12, title:"Rain Steam and Speed",         artist:"J.M.W. Turner",style:"landscape", price:78,  img:"12_rain_steam.jpg",   bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"110×80cm",  year:1844, medium:"Oil on canvas",              tags:["landscape","atmospheric","light"],desc:"A misty estuary at dawn — reeds emerging ghost-like from silver fog. Marchetti eliminates detail to distil pure atmosphere and quietude.",                                      platforms:[{name:"SHAART",price:78,note:"Free delivery"},{name:"ArtFinder",price:95,note:"+ £15 shipping"},{name:"Rise Art",price:85,note:"3-month min"}], moods:["atmospheric","mysterious","calm","moody","poetic"],      colours:["golden","amber","warm","mist","light","haze"],                 lighting:["soft","diffused","golden"],  energy:"medium", subjects:["train","bridge","rain","speed","atmosphere"]},
+  {id:13, title:"Exotic Landscape",      artist:"Henri Rousseau",   style:"botanical", price:55,  img:"13_exotic.jpg",       bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"70×90cm",   year:1910, medium:"Watercolour",                tags:["botanical","tropical","green"],   desc:"Backlit monstera leaves cast overlapping shadows. Diallo is fascinated by how light transforms the familiar into the otherworldly.",                                              platforms:[{name:"SHAART",price:55,note:"Free delivery"},{name:"ArtFinder",price:68,note:"+ £12 shipping"},{name:"Rise Art",price:62,note:"3-month min"}], moods:["fresh","tropical","natural","vibrant","lively"],         colours:["green","emerald","jade","tropical","leaf","nature"],           lighting:["bright","backlit","warm"],  energy:"medium", subjects:["botanical","leaf","plant","tropical","jungle"]},
   {id:14, title:"At the Moulin Rouge",   artist:"Henri de Toulouse-Lautrec",    style:"portrait",  price:46,  img:"14_moulin_rouge.jpg", bg:"bg-earth", initials:"SR", avClass:"av-rust",   size:"50×70cm",   year:1895, medium:"Charcoal on paper",           tags:["portrait","figures","warm"],      desc:"A face rendered almost entirely in shadow. Only eye and jawline visible. Reyes explores what we project onto incomplete visual information.",                                    platforms:[{name:"SHAART",price:46,note:"Free delivery"},{name:"ArtFinder",price:58,note:"+ £10 shipping"},{name:"Rise Art",price:52,note:"3-month min"}], moods:["mysterious","intimate","quiet","thoughtful","moody"],    colours:["brown","warm","amber","ochre","tan","earth"],                  lighting:["dramatic","warm","electric"],energy:"medium", subjects:["portrait","figures","cabaret","night","social"]},
-  {id:15, title:"Abstract",      artist:"Fritz Wotruba",style:"abstract",  price:66,  img:"15_water_lilies.jpg", bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"80×100cm",  year:1906, medium:"Acrylic on linen",           tags:["abstract","blue","calm"],         desc:"Horizontal bands of shifting blue vibrate against each other in a composition about visual frequency and resonance.",                                                             platforms:[{name:"SHAART",price:66,note:"Free delivery"},{name:"ArtFinder",price:80,note:"+ £12 shipping"},{name:"Rise Art",price:73,note:"3-month min"}], moods:["calm","serene","cool","meditative","dreamy"],            colours:["blue","green","purple","teal","water","reflective"],           lighting:["cool","soft","diffused"],   energy:"low",    subjects:["water","lilies","pond","reflection","nature"]},
-  {id:16, title:"Minimalist Cat Art That's Too Cool to Ignore ",          artist:"Victo",   style:"minimal",   price:32,  img:"16_black_square.jpg", bg:"bg-warm",  initials:"KH", avClass:"av-purple", size:"50×50cm",   year:1915, medium:"Linoprint",                  tags:["minimal","black","geometric"],    desc:"A hand-cut grid where no two cells are identical. Hoffmann celebrates the tension between system and imperfection in analogue printmaking.",                                     platforms:[{name:"SHAART",price:32,note:"Free delivery"},{name:"ArtFinder",price:42,note:"+ £8 shipping"},{name:"Rise Art",price:37,note:"3-month min"}],  moods:["bold","stark","minimal","powerful","conceptual"],        colours:["black","white","stark","contrast","pure"],                     lighting:["neutral","flat"],           energy:"medium", subjects:["square","abstract","suprematism","geometric"]},
-  {id:17, title:"Landscape",        artist:"Emilio Tejada",     style:"landscape", price:68,  img:"17_magpie.jpg",       bg:"bg-earth", initials:"JO", avClass:"av-green",  size:"60×80cm",   year:1869, medium:"Oil on board",               tags:["landscape","snow","winter"],      desc:"A beech woodland in October: copper, amber, and rust — dense, layered, intoxicating. Osei's most celebrated landscape series.",                                                 platforms:[{name:"SHAART",price:68,note:"Free delivery"},{name:"ArtFinder",price:82,note:"+ £12 shipping"},{name:"Rise Art",price:75,note:"3-month min"}], moods:["calm","serene","quiet","peaceful","wintry"],             colours:["white","pale","grey","cream","winter","snow","soft"],          lighting:["soft","winter","diffused"],energy:"low",    subjects:["snow","winter","fence","bird","landscape"]},
-  {id:18, title:"Botanical Face",         artist:"Sephora Venites",   style:"botanical", price:62,  img:"18_almond.jpg",       bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"80×60cm",   year:1890, medium:"Oil on canvas",              tags:["botanical","blue","blossom"],     desc:"A loose painterly field of scarlet poppies — spontaneous and alive. Diallo switches from watercolour to oil for vivid results.",                                                platforms:[{name:"SHAART",price:62,note:"Free delivery"},{name:"ArtFinder",price:76,note:"+ £12 shipping"},{name:"Rise Art",price:69,note:"3-month min"}], moods:["fresh","hopeful","delicate","serene","natural"],         colours:["blue","sky","white","blossom","pale","spring"],                lighting:["bright","natural","spring"],energy:"medium", subjects:["botanical","blossom","almond","tree","spring"]},
-  {id:19, title:"Portrait,",                artist:"Aleksandr Ilichev",    style:"portrait",  price:88,  img:"19_pearl.jpg",        bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"100×100cm", year:1665, medium:"Oil on canvas",              tags:["portrait","classic","intimate"],  desc:"An almost-blank canvas with a barely perceptible warm-to-cool gradient. Tanaka invites the viewer to slow down.",                                                                platforms:[{name:"SHAART",price:88,note:"Free delivery"},{name:"ArtFinder",price:105,note:"+ £15 shipping"},{name:"Rise Art",price:96,note:"3-month min"}], moods:["intimate","serene","mysterious","timeless","warm"],      colours:["brown","amber","warm","dark","rich","shadow"],                 lighting:["natural","soft","dramatic"], energy:"low",   subjects:["portrait","figure","girl","earring","classic"]},
-  {id:20, title:"Abstract Models",           artist:"Marian Williams",   style:"abstract",  price:52,  img:"20_composition8.jpg", bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"70×100cm",  year:1923, medium:"Digital print on paper",      tags:["geometric","abstract","vibrant"], desc:"A stylised cityscape reduced to glowing geometric forms against deep violet. Hoffmann's homage to the beauty of artificial light on architecture.",                              platforms:[{name:"SHAART",price:52,note:"Free delivery"},{name:"ArtFinder",price:65,note:"+ £12 shipping"},{name:"Rise Art",price:58,note:"3-month min"}], moods:["bold","dynamic","energetic","modern","expressive"],      colours:["yellow","red","blue","black","white","geometric","vibrant"],   lighting:["artificial","bright"],      energy:"high",   subjects:["abstract","geometric","circles","lines","shapes"]}
+  {id:15, title:"Water Lilies",      artist:"Claude Monet",style:"abstract",  price:66,  img:"15_water_lilies.jpg", bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"80×100cm",  year:1906, medium:"Acrylic on linen",           tags:["abstract","blue","calm"],         desc:"Horizontal bands of shifting blue vibrate against each other in a composition about visual frequency and resonance.",                                                             platforms:[{name:"SHAART",price:66,note:"Free delivery"},{name:"ArtFinder",price:80,note:"+ £12 shipping"},{name:"Rise Art",price:73,note:"3-month min"}], moods:["calm","serene","cool","meditative","dreamy"],            colours:["blue","green","purple","teal","water","reflective"],           lighting:["cool","soft","diffused"],   energy:"low",    subjects:["water","lilies","pond","reflection","nature"]},
+  {id:16, title:"Black Square",          artist:"Kazimir Malevich",   style:"minimal",   price:32,  img:"16_black_square.jpg", bg:"bg-warm",  initials:"KH", avClass:"av-purple", size:"50×50cm",   year:1915, medium:"Linoprint",                  tags:["minimal","black","geometric"],    desc:"A hand-cut grid where no two cells are identical. Hoffmann celebrates the tension between system and imperfection in analogue printmaking.",                                     platforms:[{name:"SHAART",price:32,note:"Free delivery"},{name:"ArtFinder",price:42,note:"+ £8 shipping"},{name:"Rise Art",price:37,note:"3-month min"}],  moods:["bold","stark","minimal","powerful","conceptual"],        colours:["black","white","stark","contrast","pure"],                     lighting:["neutral","flat"],           energy:"medium", subjects:["square","abstract","suprematism","geometric"]},
+  {id:17, title:"The Magpie",        artist:"Claude Monet",     style:"landscape", price:68,  img:"17_magpie.jpg",       bg:"bg-earth", initials:"JO", avClass:"av-green",  size:"60×80cm",   year:1869, medium:"Oil on board",               tags:["landscape","snow","winter"],      desc:"A beech woodland in October: copper, amber, and rust — dense, layered, intoxicating. Osei's most celebrated landscape series.",                                                 platforms:[{name:"SHAART",price:68,note:"Free delivery"},{name:"ArtFinder",price:82,note:"+ £12 shipping"},{name:"Rise Art",price:75,note:"3-month min"}], moods:["calm","serene","quiet","peaceful","wintry"],             colours:["white","pale","grey","cream","winter","snow","soft"],          lighting:["soft","winter","diffused"],energy:"low",    subjects:["snow","winter","fence","bird","landscape"]},
+  {id:18, title:"Almond Blossom",         artist:"Vincent van Gogh",   style:"botanical", price:62,  img:"18_almond.jpg",       bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"80×60cm",   year:1890, medium:"Oil on canvas",              tags:["botanical","blue","blossom"],     desc:"A loose painterly field of scarlet poppies — spontaneous and alive. Diallo switches from watercolour to oil for vivid results.",                                                platforms:[{name:"SHAART",price:62,note:"Free delivery"},{name:"ArtFinder",price:76,note:"+ £12 shipping"},{name:"Rise Art",price:69,note:"3-month min"}], moods:["fresh","hopeful","delicate","serene","natural"],         colours:["blue","sky","white","blossom","pale","spring"],                lighting:["bright","natural","spring"],energy:"medium", subjects:["botanical","blossom","almond","tree","spring"]},
+  {id:19, title:"Girl with a Pearl Earring",                artist:"Johannes Vermeer",    style:"portrait",  price:88,  img:"19_pearl.jpg",        bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"100×100cm", year:1665, medium:"Oil on canvas",              tags:["portrait","classic","intimate"],  desc:"An almost-blank canvas with a barely perceptible warm-to-cool gradient. Tanaka invites the viewer to slow down.",                                                                platforms:[{name:"SHAART",price:88,note:"Free delivery"},{name:"ArtFinder",price:105,note:"+ £15 shipping"},{name:"Rise Art",price:96,note:"3-month min"}], moods:["intimate","serene","mysterious","timeless","warm"],      colours:["brown","amber","warm","dark","rich","shadow"],                 lighting:["natural","soft","dramatic"], energy:"low",   subjects:["portrait","figure","girl","earring","classic"]},
+  {id:20, title:"Composition VIII",           artist:"Wassily Kandinsky",   style:"abstract",  price:52,  img:"20_composition8.jpg", bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"70×100cm",  year:1923, medium:"Digital print on paper",      tags:["geometric","abstract","vibrant"], desc:"A stylised cityscape reduced to glowing geometric forms against deep violet. Hoffmann's homage to the beauty of artificial light on architecture.",                              platforms:[{name:"SHAART",price:52,note:"Free delivery"},{name:"ArtFinder",price:65,note:"+ £12 shipping"},{name:"Rise Art",price:58,note:"3-month min"}], moods:["bold","dynamic","energetic","modern","expressive"],      colours:["yellow","red","blue","black","white","geometric","vibrant"],   lighting:["artificial","bright"],      energy:"high",   subjects:["abstract","geometric","circles","lines","shapes"]}
 ];
 
 let filteredArts = [...ARTWORKS];
@@ -380,18 +422,84 @@ function wishlistFromModal() {
 
 function openScan() {
   document.getElementById('scanOutput').innerHTML = '';
+  document.getElementById('scanOutput').innerHTML = '';
   document.getElementById('roomTextarea').value = '';
-  resetUploadZone();
+  document.getElementById('colourReadout').style.display = 'none';
+  resetCameraZone();
   document.getElementById('scanBackdrop').classList.add('open');
 }
-function closeScan() { document.getElementById('scanBackdrop').classList.remove('open'); }
 
-function resetUploadZone() {
-  document.getElementById('uploadZone').innerHTML = `
-    <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
-    <div class="upload-icon">📷</div>
-    <div class="upload-text">Drop a photo here or click to browse</div>
-    <div class="upload-sub">JPG, PNG, HEIC · Max 10MB</div>`;
+function closeScan() {
+  stopCamera();
+  document.getElementById('scanBackdrop').classList.remove('open');
+}
+
+function resetCameraZone() {
+  document.getElementById('cameraIdle').style.display = 'flex';
+  document.getElementById('cameraFeed').style.display = 'none';
+  document.getElementById('cameraControls').style.display = 'none';
+  document.getElementById('capturedPreview').style.display = 'none';
+  document.getElementById('capturedPreview').innerHTML = '';
+  document.getElementById('colourReadout').style.display = 'none';
+}
+
+// ── CAMERA ──────────────────────────────────────────────────────────────────
+let cameraStream = null;
+let facingMode = 'environment'; // rear camera by default on mobile
+
+async function startCamera() {
+  try {
+    const constraints = { video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const video = document.getElementById('cameraFeed');
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    document.getElementById('cameraIdle').style.display = 'none';
+    document.getElementById('cameraControls').style.display = 'flex';
+  } catch(err) {
+    if(err.name === 'NotAllowedError') showToast('Camera permission denied — please allow camera access');
+    else if(err.name === 'NotFoundError') showToast('No camera found on this device');
+    else showToast('Could not start camera: ' + err.message);
+  }
+}
+
+async function flipCamera() {
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  stopCamera();
+  await startCamera();
+}
+
+function stopCamera() {
+  if(cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  const video = document.getElementById('cameraFeed');
+  video.srcObject = null;
+  video.style.display = 'none';
+  document.getElementById('cameraControls').style.display = 'none';
+  document.getElementById('cameraIdle').style.display = 'flex';
+}
+
+function captureFrame() {
+  const video = document.getElementById('cameraFeed');
+  const canvas = document.getElementById('cameraCanvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+  // Show frozen preview
+  const preview = document.getElementById('capturedPreview');
+  preview.innerHTML = `
+    <img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/>
+    <div class="retake-btn" onclick="retakePhoto()">↩ Retake</div>`;
+  preview.style.display = 'block';
+  stopCamera();
+
+  // Extract colours from the captured frame
+  extractColours(ctx, canvas.width, canvas.height);
 }
 
 function handleFileUpload(event) {
@@ -399,27 +507,154 @@ function handleFileUpload(event) {
   if(!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    document.getElementById('uploadZone').innerHTML = `
-      <img src="${e.target.result}" style="width:100%;height:140px;object-fit:cover;border-radius:2px;margin-bottom:8px"/>
-      <div style="font-size:12px;color:var(--warm-gray)">✓ Photo loaded — add a description below for best results</div>`;
-    if(!document.getElementById('roomTextarea').value)
-      document.getElementById('roomTextarea').value = 'A room with the uploaded photo. ';
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.getElementById('cameraCanvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      // Show preview in camera zone
+      const preview = document.getElementById('capturedPreview');
+      preview.innerHTML = `
+        <img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/>
+        <div class="retake-btn" onclick="retakePhoto()">↩ Remove</div>`;
+      preview.style.display = 'block';
+      document.getElementById('cameraIdle').style.display = 'none';
+      extractColours(ctx, img.width, img.height);
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
+function retakePhoto() {
+  document.getElementById('capturedPreview').style.display = 'none';
+  document.getElementById('capturedPreview').innerHTML = '';
+  document.getElementById('cameraIdle').style.display = 'flex';
+  document.getElementById('colourReadout').style.display = 'none';
+  document.getElementById('roomTextarea').value = '';
+  // reset file input
+  const uz = document.getElementById('uploadZone');
+  uz.innerHTML = `<input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/><span>📎 Choose file</span>`;
+}
+
+// ── COLOUR EXTRACTION ────────────────────────────────────────────────────────
+// Maps an RGB colour to named colour terms used by the recommendation engine
+const COLOUR_MAP = [
+  { name:'white',   r:[200,255], g:[200,255], b:[200,255], terms:['white','pale','bright','neutral','minimal'] },
+  { name:'cream',   r:[220,255], g:[200,240], b:[170,220], terms:['cream','warm','neutral','ivory'] },
+  { name:'grey',    r:[100,200], g:[100,200], b:[100,200], terms:['grey','neutral','cool','muted','calm'] },
+  { name:'black',   r:[0,60],   g:[0,60],   b:[0,60],    terms:['dark','bold','dramatic','night'] },
+  { name:'navy',    r:[0,60],   g:[0,80],   b:[100,180], terms:['navy','blue','cool','deep','serene'] },
+  { name:'blue',    r:[30,130],  g:[80,180],  b:[150,255], terms:['blue','cool','calm','serene','teal'] },
+  { name:'teal',    r:[0,100],   g:[120,200], b:[150,220], terms:['teal','blue','green','cool','fresh'] },
+  { name:'green',   r:[30,130],  g:[120,220], b:[30,130],  terms:['green','natural','fresh','organic','botanical'] },
+  { name:'sage',    r:[130,190], g:[160,210], b:[130,180], terms:['sage','green','calm','natural','muted'] },
+  { name:'yellow',  r:[200,255], g:[180,240], b:[0,100],   terms:['amber','warm','golden','bright','cheerful'] },
+  { name:'amber',   r:[180,255], g:[120,190], b:[0,80],    terms:['amber','warm','golden','cosy','inviting'] },
+  { name:'orange',  r:[200,255], g:[80,160],  b:[0,60],    terms:['rust','warm','bold','earthy','terracotta'] },
+  { name:'red',     r:[160,255], g:[0,80],   b:[0,80],    terms:['red','bold','dramatic','passionate','warm'] },
+  { name:'pink',    r:[200,255], g:[120,200], b:[140,220], terms:['pink','blush','warm','feminine','soft'] },
+  { name:'purple',  r:[100,200], g:[0,100],   b:[150,255], terms:['purple','violet','cool','dramatic','rich'] },
+  { name:'brown',   r:[100,180], g:[60,130],  b:[20,80],   terms:['brown','warm','wood','earthy','natural'] },
+  { name:'terracotta',r:[180,240],g:[80,140], b:[40,100],  terms:['terracotta','rust','warm','earthy','clay'] },
+];
+
+function rgbToName(r, g, b) {
+  // Find closest named colour by checking range membership, then Euclidean distance
+  let best = null, bestDist = Infinity;
+  for(const c of COLOUR_MAP) {
+    if(r>=c.r[0]&&r<=c.r[1] && g>=c.g[0]&&g<=c.g[1] && b>=c.b[0]&&b<=c.b[1]) {
+      const d = Math.hypot(r-(c.r[0]+c.r[1])/2, g-(c.g[0]+c.g[1])/2, b-(c.b[0]+c.b[1])/2);
+      if(d < bestDist) { bestDist = d; best = c; }
+    }
+  }
+  if(!best) {
+    // fallback: nearest centre
+    for(const c of COLOUR_MAP) {
+      const d = Math.hypot(r-(c.r[0]+c.r[1])/2, g-(c.g[0]+c.g[1])/2, b-(c.b[0]+c.b[1])/2);
+      if(d < bestDist) { bestDist = d; best = c; }
+    }
+  }
+  return best;
+}
+
+function extractColours(ctx, w, h) {
+  // Sample pixels in a grid across the image
+  const samples = [];
+  const step = Math.max(4, Math.floor(Math.min(w,h)/40));
+  const data = ctx.getImageData(0, 0, w, h).data;
+  for(let y=0; y<h; y+=step) {
+    for(let x=0; x<w; x+=step) {
+      const i = (y*w+x)*4;
+      samples.push([data[i], data[i+1], data[i+2]]);
+    }
+  }
+
+  // K-means style: bucket into named colours and find top 5 by frequency
+  const buckets = {};
+  for(const [r,g,b] of samples) {
+    const named = rgbToName(r,g,b);
+    if(!buckets[named.name]) buckets[named.name] = { count:0, colour:named, rSum:0, gSum:0, bSum:0 };
+    buckets[named.name].count++;
+    buckets[named.name].rSum += r;
+    buckets[named.name].gSum += g;
+    buckets[named.name].bSum += b;
+  }
+
+  const sorted = Object.values(buckets).sort((a,b)=>b.count-a.count).slice(0,5);
+  const topColours = sorted.map(b => ({
+    name: b.colour.name,
+    terms: b.colour.terms,
+    hex: `rgb(${Math.round(b.rSum/b.count)},${Math.round(b.gSum/b.count)},${Math.round(b.bSum/b.count)})`,
+    pct: Math.round(b.count / samples.length * 100)
+  }));
+
+  // Show swatches
+  const swatchRow = document.getElementById('swatchRow');
+  swatchRow.innerHTML = topColours.map(c =>
+    `<div class="swatch" style="background:${c.hex}" title="${c.name} · ${c.pct}%">
+       <span class="swatch-pct">${c.pct}%</span>
+     </div>`).join('');
+  document.getElementById('colourNames').textContent = topColours.map(c=>c.name).join(' · ');
+  document.getElementById('colourReadout').style.display = 'block';
+
+  // Build auto description from colours
+  const allTerms = [...new Set(topColours.flatMap(c=>c.terms))];
+  const desc = topColours.map(c=>c.name).join(', ') + ' room';
+  document.getElementById('roomTextarea').value = desc;
+
+  // Store terms for recommendation
+  window._capturedRoomTerms = allTerms;
+  showToast('Colours detected — tap Find artworks!');
+}
+
 function useDemoRoom() {
+  retakePhoto();
   document.getElementById('roomTextarea').value = 'A modern Scandinavian living room with white walls, light oak flooring, a slate-grey linen sofa, and large north-facing windows giving soft diffused light. The main wall is about 4 metres wide. The style is calm and minimalist with some warm wood tones.';
-  document.getElementById('uploadZone').innerHTML = `<div style="font-size:32px;margin-bottom:8px">🛋️</div><div style="font-size:13px;font-weight:500">Demo: Modern Scandi living room</div><div style="font-size:11px;color:var(--warm-gray)">White walls · North light · 4m wall</div>`;
+  // Simulate scanned colours
+  document.getElementById('swatchRow').innerHTML = [
+    {hex:'rgb(245,242,235)',name:'white',pct:42},
+    {hex:'rgb(180,160,120)',name:'amber',pct:28},
+    {hex:'rgb(140,140,140)',name:'grey',pct:18},
+    {hex:'rgb(80,100,80)',  name:'sage', pct:8},
+    {hex:'rgb(60,50,40)',   name:'brown',pct:4},
+  ].map(c=>`<div class="swatch" style="background:${c.hex}"><span class="swatch-pct">${c.pct}%</span></div>`).join('');
+  document.getElementById('colourNames').textContent = 'white · amber · grey · sage · brown';
+  document.getElementById('colourReadout').style.display = 'block';
+  window._capturedRoomTerms = ['white','pale','warm','amber','grey','neutral','calm','natural','minimal','scandi'];
 }
 
 function runRecommendation() {
   const roomDesc = document.getElementById('roomTextarea').value.trim();
-  if(!roomDesc) { showToast('Please describe your room or use the demo room.'); return; }
+  const hasCaptured = window._capturedRoomTerms && window._capturedRoomTerms.length;
+  if(!roomDesc && !hasCaptured) { showToast('Open camera or describe your room first.'); return; }
   const out = document.getElementById('scanOutput');
-  out.innerHTML = `<div style="padding:24px;text-align:center"><div class="spinner"></div><div class="analyzing-text">Matching artworks to your space…</div></div>`;
+  out.innerHTML = `<div style="padding:24px;text-align:center"><div class="spinner"></div><div class="analyzing-text">Analysing your space…</div></div>`;
   setTimeout(() => {
-    const roomTerms = parseRoom(roomDesc);
+    const textTerms = roomDesc ? parseRoom(roomDesc) : [];
+    const roomTerms = hasCaptured ? [...new Set([...window._capturedRoomTerms, ...textTerms])] : textTerms;
     const results = mlRecommend(roomTerms, 6);
     const topScore = results[0]?.score || 0.001;
     const recsHtml = results.map(r => {

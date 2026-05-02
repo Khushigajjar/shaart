@@ -134,16 +134,17 @@
         <video id="cameraFeed" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover;border-radius:4px"></video>
         <canvas id="cameraCanvas" style="display:none"></canvas>
         <div class="camera-controls" id="cameraControls" style="display:none">
-          <button class="cam-btn cam-flip" onclick="flipCamera()" title="Flip camera">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
+          <button class="cam-btn cam-flip" ontouchend="event.preventDefault();flipCamera()" onclick="flipCamera()" title="Flip camera">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"/></svg>
           </button>
-          <button class="cam-btn cam-capture" onclick="captureFrame()" title="Capture">
+          <button class="cam-btn cam-capture" ontouchend="event.preventDefault();captureFrame()" onclick="captureFrame()" title="Capture">
             <div class="capture-ring"></div>
           </button>
-          <button class="cam-btn cam-close" onclick="stopCamera()" title="Close">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <button class="cam-btn cam-close" ontouchend="event.preventDefault();stopCamera()" onclick="stopCamera()" title="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+        <div style="position:absolute;bottom:100px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:.1em;text-transform:uppercase;pointer-events:none;z-index:9" id="captureHint">Tap circle to capture</div>
         <div class="camera-corner tl"></div>
         <div class="camera-corner tr"></div>
         <div class="camera-corner bl"></div>
@@ -456,6 +457,8 @@ async function startCamera() {
     video.style.display = 'block';
     document.getElementById('cameraIdle').style.display = 'none';
     document.getElementById('cameraControls').style.display = 'flex';
+    const hint = document.getElementById('captureHint');
+    if(hint) { hint.style.display = 'block'; }
   } catch(err) {
     if(err.name === 'NotAllowedError') showToast('Camera permission denied — please allow camera access');
     else if(err.name === 'NotFoundError') showToast('No camera found on this device');
@@ -496,6 +499,7 @@ function captureFrame() {
     <img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/>
     <div class="retake-btn" onclick="retakePhoto()">↩ Retake</div>`;
   preview.style.display = 'block';
+  document.getElementById('captureHint').style.display = 'none';
   stopCamera();
 
   // Extract colours from the captured frame

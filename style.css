@@ -163,7 +163,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 #howSection{background:var(--ink);color:var(--paper);padding:100px 48px}
 .how-inner{max-width:900px;margin:0 auto}
 .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:48px;margin-top:64px}
-.how-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:rgba(255, 157, 0);margin-bottom:16px}
+.how-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:rgba(245,240,232,.15);margin-bottom:16px}
 .how-step-title{font-size:15px;font-weight:500;margin-bottom:8px}
 .how-step-desc{font-size:13px;color:rgba(245,240,232,.5);line-height:1.6}
 
@@ -176,3 +176,61 @@ footer{background:#111;color:var(--paper);padding:80px 48px 40px}
 .footer-col a{display:block;font-size:13px;color:rgba(245,240,232,.5);margin-bottom:8px;transition:color .2s;cursor:pointer}
 .footer-col a:hover{color:var(--paper)}
 .footer-bottom{display:flex;justify-content:space-between;padding-top:24px;border-top:.5px solid rgba(245,240,232,.08);font-size:11px;color:rgba(245,240,232,.25)}
+
+/* ── CAMERA SCAN ─────────────────────────────────────────────────────────── */
+.camera-zone{position:relative;width:100%;height:300px;background:#111;border-radius:8px;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center}
+.camera-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(245,240,232,.6);text-align:center;padding:24px}
+.camera-icon{width:56px;height:56px;border-radius:50%;background:rgba(245,240,232,.08);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.camera-idle-text{font-size:14px;color:rgba(245,240,232,.8);font-weight:500}
+.camera-idle-sub{font-size:12px;color:rgba(245,240,232,.4);margin-bottom:8px}
+.camera-start-btn{padding:10px 24px;font-size:13px}
+
+/* Corner frame brackets */
+.camera-corner{position:absolute;width:20px;height:20px;border-color:rgba(245,240,232,.5);border-style:solid;z-index:2}
+.camera-corner.tl{top:10px;left:10px;border-width:2px 0 0 2px;border-radius:2px 0 0 0}
+.camera-corner.tr{top:10px;right:10px;border-width:2px 2px 0 0;border-radius:0 2px 0 0}
+.camera-corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px;border-radius:0 0 0 2px}
+.camera-corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0;border-radius:0 0 2px 0}
+
+/* Camera control buttons */
+.camera-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:28px;z-index:10;padding:16px 0 20px;background:linear-gradient(transparent,rgba(0,0,0,0.5))}
+.cam-btn{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(40,35,30,.7);color:#fff;backdrop-filter:blur(6px);transition:background .15s;border:2px solid rgba(255,255,255,0.3);cursor:pointer;-webkit-tap-highlight-color:rgba(255,255,255,0.2);touch-action:manipulation}
+.cam-btn:active{background:rgba(255,255,255,.25)}
+.cam-capture{width:80px !important;height:80px !important;background:rgba(255,255,255,0.15) !important;border:4px solid #fff !important;padding:0;box-shadow:0 0 0 3px rgba(255,255,255,0.3)}
+.cam-capture:active{background:rgba(255,255,255,0.4) !important;transform:scale(0.94)}
+.capture-ring{width:56px;height:56px;border-radius:50%;background:#fff;pointer-events:none}
+
+/* Retake button overlaid on preview */
+.retake-btn{position:absolute;bottom:12px;right:12px;padding:6px 14px;background:rgba(26,23,20,.7);color:#fff;font-size:12px;border-radius:100px;cursor:pointer;backdrop-filter:blur(4px);z-index:3}
+.retake-btn:hover{background:rgba(26,23,20,.9)}
+
+/* Colour swatches */
+.colour-readout-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px}
+.swatch-row{display:flex;gap:6px;margin-bottom:8px}
+.swatch{flex:1;height:36px;border-radius:4px;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px}
+.swatch-pct{font-size:9px;color:rgba(255,255,255,.8);font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.colour-names{font-size:11px;color:var(--warm-gray);margin-bottom:16px;letter-spacing:.04em}
+
+/* Upload fallback strip */
+.upload-fallback{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.upload-fallback-label{font-size:12px;color:var(--warm-gray);white-space:nowrap}
+.upload-zone-small{display:flex;align-items:center;gap:6px;padding:8px 16px;border:.5px dashed rgba(26,23,20,.2);border-radius:100px;cursor:pointer;font-size:12px;color:var(--warm-gray);transition:border-color .2s}
+.upload-zone-small:hover{border-color:var(--rust);color:var(--rust)}
+.upload-zone-small input{display:none}
+
+/* Mobile responsive */
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .hero{grid-template-columns:1fr;padding:calc(var(--nav-h)+40px) 20px 60px;gap:40px}
+  .hero-gallery-grid{display:none}
+  #gallery{padding:60px 20px}
+  .section-header{flex-direction:column}
+  .how-grid{grid-template-columns:1fr 1fr;gap:32px}
+  footer{padding:60px 20px 32px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .modal{grid-template-columns:1fr;max-height:95vh}
+  .modal-left{display:none}
+  .scan-modal{width:100vw;max-height:100vh;border-radius:0}
+  .scan-header{padding:20px 20px 0}
+  .scan-body{padding:16px 20px 24px}
+}

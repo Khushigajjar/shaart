@@ -5,6 +5,9 @@
   --surface:#faf7f2;--border:rgba(26,23,20,.08);--overlay:rgba(26,23,20,.45);
   --radius:2px;--nav-h:56px;
 }
+:root{
+  --nav-h: 76px;
+}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
 img{display:block;max-width:100%}
@@ -15,7 +18,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit;touch-acti
 nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(245,240,232,.95);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border)}
 .nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;letter-spacing:.02em;flex-shrink:0}
 .nav-logo em{font-style:italic;color:var(--rust)}
-.nav-links{display:none}
+.nav-links{display:none;gap:32px}
 .nav-actions{display:flex;gap:8px;align-items:center}
 .btn-scan{display:flex;align-items:center;gap:6px;padding:7px 14px;border:.5px solid var(--ink);border-radius:100px;font-size:12px;letter-spacing:.03em;transition:all .2s;white-space:nowrap}
 .btn-scan svg{flex-shrink:0}
@@ -30,7 +33,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .btn-outline:active{background:var(--ink);color:var(--paper)}
 
 /* ── HERO ───────────────────────────────────────────────────────────────── */
-.hero{padding:calc(var(--nav-h) + 40px) 16px 60px;max-width:1400px;margin:0 auto}
+.hero{padding:calc(var(--nav-h) + 120px) 16px 60px;max-width:1400px;margin:0 auto}
+
 .hero-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:16px}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,8vw,80px);font-weight:300;line-height:1.05;margin-bottom:20px}
 .hero-title em{font-style:italic;color:var(--rust)}
@@ -200,7 +204,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 #howSection{background:var(--ink);color:var(--paper);padding:70px 16px}
 .how-inner{max-width:900px;margin:0 auto}
 .how-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
-.how-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:rgba(245,240,232,.12);margin-bottom:12px}
+.how-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:rgb(193, 144, 9);margin-bottom:12px}
 .how-step-title{font-size:14px;font-weight:500;margin-bottom:6px}
 .how-step-desc{font-size:12px;color:rgba(245,240,232,.45);line-height:1.6}
 
@@ -263,10 +267,13 @@ footer{background:#111;color:var(--paper);padding:50px 16px 32px}
 @media(min-width:1024px){
   :root{--nav-h:64px}
   nav{padding:0 48px}
+  .nav-links{display:flex;gap:32px}
+  .nav-links a{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--warm-gray);transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
   .btn-scan:hover{background:var(--ink);color:var(--paper)}
   .btn-primary:hover{opacity:.85}
   .btn-outline:hover{background:var(--ink);color:var(--paper)}
-  .hero{padding:calc(var(--nav-h)+80px) 48px 80px;gap:80px}
+  .hero{padding:calc(var(--nav-h) + 120px) 48px 80px;gap:80px}
   .hero-art-card:first-child .art-placeholder{height:340px}
   .hero-art-card:not(:first-child) .art-placeholder{height:165px}
   #gallery{padding:100px 48px}
@@ -275,4 +282,5 @@ footer{background:#111;color:var(--paper);padding:50px 16px 32px}
   .art-card-img{height:280px}
   #howSection{padding:100px 48px}
   footer{padding:80px 48px 40px}
+  .nav-links{display:flex}
 }

@@ -128,7 +128,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
           </div>
           <div class="camera-idle-text">Tap to open camera</div>
-          <div class="camera-idle-sub">or upload a photo below</div>
+          <div class="camera-idle-sub"></div>
           <button class="btn-primary camera-start-btn" onclick="startCamera()">Open Camera</button>
         </div>
         <video id="cameraFeed" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover;border-radius:4px"></video>
@@ -161,7 +161,7 @@
 
       <!-- UPLOAD FALLBACK -->
       <div class="upload-fallback">
-        <div class="upload-fallback-label">Or upload a photo</div>
+        <div class="upload-fallback-label"></div>
         <label class="upload-zone-small" id="uploadZone">
           <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
           <span>📎 Choose file</span>
@@ -188,7 +188,7 @@
 <!-- HOW IT WORKS -->
 <section id="howSection">
   <div class="how-inner">
-    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:16px">Simple process</div>
+    
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300">How SHAART works</h2>
     <div class="how-grid">
       <div><div class="how-num">01</div><div class="how-step-title">Browse or scan</div><div class="how-step-desc">Explore the collection or scan your space for AI-powered art recommendations.</div></div>

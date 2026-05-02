@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SHAART — Rent Original Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">SH<em>AA</em>RT</div>
+  <div class="nav-links">
+    <a onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Browse Art</a>
+    <a onclick="document.getElementById('howSection').scrollIntoView({behavior:'smooth'})">How it Works</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-scan" onclick="openScan()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+      Scan your space
+    </button>
+    <button class="cart-btn" onclick="showToast('Your wishlist: ' + wishlist.size + ' item(s)')">
+      ♡ <span class="cart-count" id="wishlistCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-label">Art Rental Platform · United Kingdom</div>
+    <h1 class="hero-title">Rent <em>original art</em><br>from independent artists</h1>
+    <p class="hero-sub">Flexible rentals for homes, offices and institutions. Swap anytime. No purchase required.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Browse Collection</button>
+      <button class="btn-outline" onclick="openScan()">Scan Your Space</button>
+    </div>
+  </div>
+  <div>
+    <div class="hero-gallery-grid">
+      <div class="hero-art-card"><div class="art-placeholder bg-warm"><img src="1_great_wave.jpg" alt="The Great Wave"></div></div>
+      <div class="hero-art-card"><div class="art-placeholder bg-cool"><img src="10_kiss.jpg" alt="The Kiss"></div></div>
+      <div class="hero-art-card"><div class="art-placeholder bg-earth"><img src="13_exotic.jpg" alt="Exotic Landscape"></div></div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">340+</div><div class="stat-label">Artists</div></div>
+      <div class="stat"><div class="stat-num">2,800</div><div class="stat-label">Works</div></div>
+      <div class="stat"><div class="stat-num">£28</div><div class="stat-label">From /mo</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-header">
+    <h2 class="section-title">The Collection</h2>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <div class="filters" id="filterBar">
+        <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('abstract',this)">Abstract</button>
+        <button class="filter-chip" onclick="setFilter('landscape',this)">Landscape</button>
+        <button class="filter-chip" onclick="setFilter('portrait',this)">Portrait</button>
+        <button class="filter-chip" onclick="setFilter('minimal',this)">Minimal</button>
+        <button class="filter-chip" onclick="setFilter('botanical',this)">Botanical</button>
+      </div>
+      <select class="sort-select" onchange="sortArt(this.value)">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+      </select>
+    </div>
+  </div>
+  <div class="art-grid" id="artGrid"><div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--warm-gray)">Loading collection…</div></div>
+</section>
+
+<!-- ART DETAIL MODAL -->
+<div class="modal-backdrop" id="artModal" onclick="if(event.target===this)closeArtModal()">
+  <div class="modal">
+    <div class="modal-left">
+      <button class="modal-close" onclick="closeArtModal()">✕</button>
+      <div class="modal-img-area" id="mImgArea"></div>
+    </div>
+    <div class="modal-right">
+      <div class="modal-label" id="mStyle"></div>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <div class="modal-artist-line">
+        <div class="avatar" id="mAvatar"></div>
+        <span id="mArtistName"></span>
+        <span class="verified">✦ Verified</span>
+      </div>
+      <div class="modal-meta-grid" id="mMeta"></div>
+      <div class="divider"></div>
+      <p class="modal-desc" id="mDesc"></p>
+      <button class="ai-desc-btn" id="aiDescBtn" onclick="generateAIDesc()">✦ Generate AI art analysis</button>
+      <div id="aiDescOutput"></div>
+      <div class="divider"></div>
+      <div class="compare-section">
+        <div class="compare-title">Price Comparison</div>
+        <div class="compare-grid" id="mCompare"></div>
+        <div class="savings-note" id="mSavings"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="badge-row" id="mTags"></div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="wishlistFromModal()">♡ Wishlist</button>
+        <button class="btn-primary" onclick="showToast('Rental request sent! We\'ll be in touch.')">Rent this piece</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCAN / RECOMMEND MODAL -->
+<div class="scan-backdrop" id="scanBackdrop" onclick="if(event.target===this)closeScan()">
+  <div class="scan-modal">
+    <div class="scan-header">
+      <h2 class="scan-title">Scan your space</h2>
+      <button class="modal-close" style="position:static" onclick="closeScan()">✕</button>
+    </div>
+    <div class="scan-body">
+      <p class="scan-sub">Upload a photo of your room <strong>or describe it below</strong>. Our AI analyses the colours, lighting, and style to recommend perfect artworks for your space.</p>
+      <label class="upload-zone" id="uploadZone">
+        <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Drop a photo here or click to browse</div>
+        <div class="upload-sub">JPG, PNG, HEIC · Max 10MB</div>
+      </label>
+      <div class="room-form">
+        <label for="roomTextarea">Or describe your room</label>
+        <textarea class="room-textarea" id="roomTextarea" placeholder="e.g. A bright living room with white walls, wooden floors, a navy sofa, and large south-facing windows. The main wall is about 3 metres wide. Style is Scandi-minimalist."></textarea>
+        <div class="room-hint">The more detail you give, the better the recommendations.</div>
+      </div>
+      <div class="scan-actions-row">
+        <button class="btn-outline" onclick="useDemoRoom()">✦ Use demo room</button>
+        <button class="btn-primary" onclick="runRecommendation()">Get recommendations →</button>
+      </div>
+      <div id="scanOutput"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HOW IT WORKS -->
+<section id="howSection">
+  <div class="how-inner">
+    <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:16px">Simple process</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300">How SHAART works</h2>
+    <div class="how-grid">
+      <div><div class="how-num">01</div><div class="how-step-title">Browse or scan</div><div class="how-step-desc">Explore the collection or scan your space for AI-powered art recommendations.</div></div>
+      <div><div class="how-num">02</div><div class="how-step-title">Compare prices</div><div class="how-step-desc">See side-by-side pricing across multiple rental platforms. Always get the best deal.</div></div>
+      <div><div class="how-num">03</div><div class="how-step-title">Rent flexibly</div><div class="how-step-desc">Monthly or annual plans. Swap pieces anytime. Free delivery and installation included.</div></div>
+      <div><div class="how-num">04</div><div class="how-step-title">Support artists</div><div class="how-step-desc">70% of every rental goes directly to the independent artist. Art that pays.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">SH<em>AA</em>RT</div>
+      <div class="footer-tagline">Making original art accessible<br>without requiring ownership.</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:0.5px solid rgba(245,240,232,0.15);border-radius:100px;font-size:10px;color:rgba(245,240,232,0.4);margin-top:12px">🇬🇧 United Kingdom</div>
+    </div>
+    <div class="footer-col"><h4>Explore</h4><a>Browse collection</a><a>Artists</a><a>Scan your space</a><a>Gift rentals</a></div>
+    <div class="footer-col"><h4>For business</h4><a>Offices</a><a>Hotels</a><a>Corporate gifting</a><a>Bulk rentals</a></div>
+    <div class="footer-col"><h4>Company</h4><a>About SHAART</a><a>Join as artist</a><a>Press</a><a>Contact</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2025 SHAART Ltd. All rights reserved.</span><span>Privacy · Terms · Cookies</span></div>
+</footer>
+
+<script>
+const ARTWORKS = [
+  {id:1,  title:"Girl with a ball",        artist:"Miguel Guía", style:"abstract",  price:58,  img:"1_great_wave.jpg",    bg:"bg-cool",  initials:"MG", avClass:"av-blue",   size:"120×90cm",  year:2019, medium:"Sculpture: bronze, metal",              tags:["ocean","movement","blue"],        desc:"Layered washes of cobalt and cerulean evoke the rhythm of deep-sea currents. Marchetti's gestural marks dissolve at the edges, creating a sense of perpetual motion.",             platforms:[{name:"SHAART",price:58,note:"Free delivery"},{name:"ArtFinder",price:72,note:"+ £15 shipping"},{name:"Rise Art",price:65,note:"3-month min"}], moods:["calm","serene","fluid","dreamy","meditative"],           colours:["blue","cobalt","cerulean","navy","teal","cool","grey"],         lighting:["soft","diffused","cool"],   energy:"low",    subjects:["ocean","water","sea","wave","abstract"]},
+  {id:2,  title:"Silver Lace Panther",   artist:"Richard Orlinski",     style:"landscape", price:72,  img:"2_wheat_field.jpg",   bg:"bg-earth", initials:"RO", avClass:"av-green",  size:"100×80cm",  year:1889, medium:"Acrylic on linen",           tags:["forest","warm","golden"],         desc:"Warm amber light filters through a stand of scots pines at dusk. Osei captures that brief, charged moment when the world is entirely gilded.",                                   platforms:[{name:"SHAART",price:72,note:"Free delivery"},{name:"ArtFinder",price:88,note:"+ £15 shipping"},{name:"Rise Art",price:79,note:"3-month min"}], moods:["warm","cosy","romantic","nostalgic","inviting"],         colours:["gold","amber","orange","warm","brown","rust","yellow","earth"],lighting:["warm","golden","dusk"],     energy:"medium", subjects:["forest","trees","nature","landscape","woodland"]},
+  {id:3,  title:"BLOOMING BURST",     artist:"Utagawa Hiroshige",    style:"minimal",   price:34,  img:"3_plum_park.jpg",     bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"60×80cm",   year:1857, medium:"Ink on paper",               tags:["minimal","ink","calm"],           desc:"A single brushstroke — seemingly effortless, yet the result of years of practice. Tanaka explores what can be communicated by what is left absent.",                             platforms:[{name:"SHAART",price:34,note:"Free delivery"},{name:"ArtFinder",price:45,note:"+ £10 shipping"},{name:"Rise Art",price:40,note:"3-month min"}], moods:["calm","quiet","zen","meditative","serene","focused"],    colours:["white","grey","beige","cream","neutral","pale","muted"],        lighting:["natural","soft","neutral"], energy:"low",    subjects:["minimal","abstract","brushstroke","line"]},
+  {id:4,  title:"AFTERNOON STROLL",       artist:"Henri Fantin-Latour",   style:"minimal", price:42,  img:"4_still_life.jpg",    bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"50×70cm",   year:1865, medium:"Watercolour",                tags:["botanical","green","nature"],     desc:"Diallo's meticulous watercolour study captures every vein and shadow of a mature shield fern. Scientific precision meets painterly sensitivity.",                                 platforms:[{name:"SHAART",price:42,note:"Free delivery"},{name:"ArtFinder",price:55,note:"+ £10 shipping"},{name:"Rise Art",price:48,note:"3-month min"}], moods:["fresh","calm","natural","organic","peaceful"],           colours:["green","sage","moss","forest","olive","leaf","nature"],        lighting:["natural","soft","cool"],    energy:"low",    subjects:["botanical","plant","fern","leaf","nature","garden"]},
+  {id:5,  title:"GOLDEN HARMONY",      artist:"Piet Mondrian",   style:"abstract",  price:48,  img:"5_mondrian.jpg",      bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"80×80cm",   year:1930, medium:"Digital print on aluminium", tags:["geometric","primary","bold"],     desc:"Interlocking hexagonal forms cast complex shadows across a pale field. Hoffmann is interested in the hidden mathematical order beneath city structures.",                         platforms:[{name:"SHAART",price:48,note:"Free delivery"},{name:"ArtFinder",price:60,note:"+ £12 shipping"},{name:"Rise Art",price:54,note:"3-month min"}], moods:["bold","modern","graphic","intellectual","cool"],         colours:["red","blue","yellow","white","primary","bold"],                lighting:["cool","artificial"],        energy:"medium", subjects:["geometric","pattern","abstract","grid"]},
+  {id:6,  title:"Rocks and Mirror Square II",      artist:"Mary Cassatt",    style:"portrait",  price:85,  img:"6_childs_bath.jpg",    bg:"bg-earth", initials:"SR", avClass:"av-rust",   size:"70×90cm",   year:1893, medium:"Oil on canvas",              tags:["portrait","warm","intimate"],     desc:"A figure absorbed in a book, lit by soft morning window light. Reyes paints human interiority with quiet reverence — no face, just light and concentration.",                   platforms:[{name:"SHAART",price:85,note:"Free delivery"},{name:"ArtFinder",price:100,note:"+ £15 shipping"},{name:"Rise Art",price:92,note:"3-month min"}],moods:["warm","intimate","cosy","thoughtful","homely"],          colours:["warm","amber","tan","brown","cream","gold","terracotta"],      lighting:["warm","morning","window"],  energy:"low",    subjects:["figure","portrait","person","reading","interior"]},
+  {id:7,  title:"Nailed it Series No.81",      artist:"Caspar David Friedrich",     style:"landscape", price:96,  img:"7_wanderer.jpg",      bg:"bg-warm",  initials:"JO", avClass:"av-green",  size:"140×70cm",  year:1818, medium:"Oil on linen",               tags:["landscape","vast","muted"],       desc:"An expansive panorama of Bolivian salt flats at midday. The reflective white surface merges seamlessly with a bleached sky — horizon dissolved.",                                platforms:[{name:"SHAART",price:96,note:"Free delivery"},{name:"ArtFinder",price:115,note:"+ £18 shipping"},{name:"Rise Art",price:105,note:"3-month min"}],moods:["vast","calm","minimalist","serene","contemplative"],     colours:["white","grey","pale","silver","muted","neutral","beige"],       lighting:["bright","midday","bleached"],energy:"low",   subjects:["landscape","horizon","sky","flat","open","nature"]},
+  {id:8,  title:"Juok Sculpture", artist:"Chandler McLellan",   style:"botanical", price:38,  img:"8_irises.jpg",        bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"60×60cm",   year:1889, medium:"Gouache on paper",            tags:["botanical","purple","floral"],    desc:"An explosion of chrysanthemum petals rendered in dense, joyful gouache. Each petal individually considered; the whole radiantly exuberant.",                                    platforms:[{name:"SHAART",price:38,note:"Free delivery"},{name:"ArtFinder",price:50,note:"+ £10 shipping"},{name:"Rise Art",price:44,note:"3-month min"}], moods:["joyful","playful","romantic","feminine","vibrant"],      colours:["purple","blue","green","violet","floral","rich"],              lighting:["soft","warm","bright"],     energy:"high",   subjects:["botanical","flower","floral","iris","bloom"]},
+  {id:9,  title:"Le Baiser",       artist:"Robert Delaunay",   style:"abstract",  price:44,  img:"9_premier_disque.jpg", bg:"bg-earth", initials:"KH", avClass:"av-purple", size:"60×60cm",   year:1913, medium:"Acrylic on board",            tags:["geometric","colour","circular"],  desc:"Seven concentric ellipses, each offset by a few degrees, generate a mesmerising sense of rotation from a completely static composition.",                                        platforms:[{name:"SHAART",price:44,note:"Free delivery"},{name:"ArtFinder",price:56,note:"+ £10 shipping"},{name:"Rise Art",price:50,note:"3-month min"}], moods:["warm","ordered","calm","graphic","precise"],             colours:["red","blue","yellow","green","primary","vibrant"],             lighting:["warm","natural"],           energy:"medium", subjects:["geometric","circle","concentric","abstract","colour"]},
+  {id:10, title:"The Kiss",        artist:"Gustav Klimt",    style:"abstract",  price:110, img:"10_kiss.jpg",         bg:"bg-warm",  initials:"SR", avClass:"av-rust",   size:"90×110cm",  year:1908, medium:"Oil on canvas",              tags:["abstract","gold","bold"],         desc:"An interior space rendered in cadmium reds and earth tones. Architecture dissolves into pure chromatic experience. Bold, unapologetic, transformative.",                         platforms:[{name:"SHAART",price:110,note:"Free delivery"},{name:"ArtFinder",price:130,note:"+ £18 shipping"},{name:"Rise Art",price:120,note:"3-month min"}],moods:["bold","dramatic","passionate","powerful","energetic"],   colours:["gold","amber","orange","warm","rich","luxury"],                lighting:["warm","dramatic","intense"],energy:"high",   subjects:["figures","love","embrace","gold","ornamental"]},
+  {id:11, title:" Le canoé ",           artist:"Jean-Philippe Berger",    style:"minimal",   price:28,  img:"11_nocturne.jpg",     bg:"bg-cool",  initials:"YT", avClass:"av-rust",   size:"50×60cm",   year:1875, medium:"Graphite on paper",           tags:["minimal","night","dark"],         desc:"Two hand-drawn graphite lines, imperfectly parallel. In their near-symmetry lies a meditation on tension, harmony, and the limits of human precision.",                         platforms:[{name:"SHAART",price:28,note:"Free delivery"},{name:"ArtFinder",price:38,note:"+ £8 shipping"},{name:"Rise Art",price:33,note:"3-month min"}],  moods:["quiet","zen","focused","calm","mysterious"],             colours:["black","dark","gold","night","deep","smoke"],                  lighting:["night","artificial","dim"], energy:"low",    subjects:["night","fireworks","dark","atmosphere"]},
+  {id:12, title:"Kringelment_Purple",         artist:"Selçuk Dizlek",style:"landscape", price:78,  img:"12_rain_steam.jpg",   bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"110×80cm",  year:1844, medium:"Oil on canvas",              tags:["landscape","atmospheric","light"],desc:"A misty estuary at dawn — reeds emerging ghost-like from silver fog. Marchetti eliminates detail to distil pure atmosphere and quietude.",                                      platforms:[{name:"SHAART",price:78,note:"Free delivery"},{name:"ArtFinder",price:95,note:"+ £15 shipping"},{name:"Rise Art",price:85,note:"3-month min"}], moods:["atmospheric","mysterious","calm","moody","poetic"],      colours:["golden","amber","warm","mist","light","haze"],                 lighting:["soft","diffused","golden"],  energy:"medium", subjects:["train","bridge","rain","speed","atmosphere"]},
+  {id:13, title:"Woodland Dreams",      artist:"Kamo Atoyan",   style:"botanical", price:55,  img:"13_exotic.jpg",       bg:"bg-cool",  initials:"AD", avClass:"av-green",  size:"70×90cm",   year:1910, medium:"Watercolour",                tags:["botanical","tropical","green"],   desc:"Backlit monstera leaves cast overlapping shadows. Diallo is fascinated by how light transforms the familiar into the otherworldly.",                                              platforms:[{name:"SHAART",price:55,note:"Free delivery"},{name:"ArtFinder",price:68,note:"+ £12 shipping"},{name:"Rise Art",price:62,note:"3-month min"}], moods:["fresh","tropical","natural","vibrant","lively"],         colours:["green","emerald","jade","tropical","leaf","nature"],           lighting:["bright","backlit","warm"],  energy:"medium", subjects:["botanical","leaf","plant","tropical","jungle"]},
+  {id:14, title:"At the Moulin Rouge",   artist:"Henri de Toulouse-Lautrec",    style:"portrait",  price:46,  img:"14_moulin_rouge.jpg", bg:"bg-earth", initials:"SR", avClass:"av-rust",   size:"50×70cm",   year:1895, medium:"Charcoal on paper",           tags:["portrait","figures","warm"],      desc:"A face rendered almost entirely in shadow. Only eye and jawline visible. Reyes explores what we project onto incomplete visual information.",                                    platforms:[{name:"SHAART",price:46,note:"Free delivery"},{name:"ArtFinder",price:58,note:"+ £10 shipping"},{name:"Rise Art",price:52,note:"3-month min"}], moods:["mysterious","intimate","quiet","thoughtful","moody"],    colours:["brown","warm","amber","ochre","tan","earth"],                  lighting:["dramatic","warm","electric"],energy:"medium", subjects:["portrait","figures","cabaret","night","social"]},
+  {id:15, title:"Abstract",      artist:"Fritz Wotruba",style:"abstract",  price:66,  img:"15_water_lilies.jpg", bg:"bg-cool",  initials:"EM", avClass:"av-blue",   size:"80×100cm",  year:1906, medium:"Acrylic on linen",           tags:["abstract","blue","calm"],         desc:"Horizontal bands of shifting blue vibrate against each other in a composition about visual frequency and resonance.",                                                             platforms:[{name:"SHAART",price:66,note:"Free delivery"},{name:"ArtFinder",price:80,note:"+ £12 shipping"},{name:"Rise Art",price:73,note:"3-month min"}], moods:["calm","serene","cool","meditative","dreamy"],            colours:["blue","green","purple","teal","water","reflective"],           lighting:["cool","soft","diffused"],   energy:"low",    subjects:["water","lilies","pond","reflection","nature"]},
+  {id:16, title:"Minimalist Cat Art That's Too Cool to Ignore ",          artist:"Victo",   style:"minimal",   price:32,  img:"16_black_square.jpg", bg:"bg-warm",  initials:"KH", avClass:"av-purple", size:"50×50cm",   year:1915, medium:"Linoprint",                  tags:["minimal","black","geometric"],    desc:"A hand-cut grid where no two cells are identical. Hoffmann celebrates the tension between system and imperfection in analogue printmaking.",                                     platforms:[{name:"SHAART",price:32,note:"Free delivery"},{name:"ArtFinder",price:42,note:"+ £8 shipping"},{name:"Rise Art",price:37,note:"3-month min"}],  moods:["bold","stark","minimal","powerful","conceptual"],        colours:["black","white","stark","contrast","pure"],                     lighting:["neutral","flat"],           energy:"medium", subjects:["square","abstract","suprematism","geometric"]},
+  {id:17, title:"Landscape",        artist:"Emilio Tejada",     style:"landscape", price:68,  img:"17_magpie.jpg",       bg:"bg-earth", initials:"JO", avClass:"av-green",  size:"60×80cm",   year:1869, medium:"Oil on board",               tags:["landscape","snow","winter"],      desc:"A beech woodland in October: copper, amber, and rust — dense, layered, intoxicating. Osei's most celebrated landscape series.",                                                 platforms:[{name:"SHAART",price:68,note:"Free delivery"},{name:"ArtFinder",price:82,note:"+ £12 shipping"},{name:"Rise Art",price:75,note:"3-month min"}], moods:["calm","serene","quiet","peaceful","wintry"],             colours:["white","pale","grey","cream","winter","snow","soft"],          lighting:["soft","winter","diffused"],energy:"low",    subjects:["snow","winter","fence","bird","landscape"]},
+  {id:18, title:"Botanical Face",         artist:"Sephora Venites",   style:"botanical", price:62,  img:"18_almond.jpg",       bg:"bg-warm",  initials:"AD", avClass:"av-green",  size:"80×60cm",   year:1890, medium:"Oil on canvas",              tags:["botanical","blue","blossom"],     desc:"A loose painterly field of scarlet poppies — spontaneous and alive. Diallo switches from watercolour to oil for vivid results.",                                                platforms:[{name:"SHAART",price:62,note:"Free delivery"},{name:"ArtFinder",price:76,note:"+ £12 shipping"},{name:"Rise Art",price:69,note:"3-month min"}], moods:["fresh","hopeful","delicate","serene","natural"],         colours:["blue","sky","white","blossom","pale","spring"],                lighting:["bright","natural","spring"],energy:"medium", subjects:["botanical","blossom","almond","tree","spring"]},
+  {id:19, title:"Portrait,",                artist:"Aleksandr Ilichev",    style:"portrait",  price:88,  img:"19_pearl.jpg",        bg:"bg-warm",  initials:"YT", avClass:"av-rust",   size:"100×100cm", year:1665, medium:"Oil on canvas",              tags:["portrait","classic","intimate"],  desc:"An almost-blank canvas with a barely perceptible warm-to-cool gradient. Tanaka invites the viewer to slow down.",                                                                platforms:[{name:"SHAART",price:88,note:"Free delivery"},{name:"ArtFinder",price:105,note:"+ £15 shipping"},{name:"Rise Art",price:96,note:"3-month min"}], moods:["intimate","serene","mysterious","timeless","warm"],      colours:["brown","amber","warm","dark","rich","shadow"],                 lighting:["natural","soft","dramatic"], energy:"low",   subjects:["portrait","figure","girl","earring","classic"]},
+  {id:20, title:"Abstract Models",           artist:"Marian Williams",   style:"abstract",  price:52,  img:"20_composition8.jpg", bg:"bg-cool",  initials:"KH", avClass:"av-purple", size:"70×100cm",  year:1923, medium:"Digital print on paper",      tags:["geometric","abstract","vibrant"], desc:"A stylised cityscape reduced to glowing geometric forms against deep violet. Hoffmann's homage to the beauty of artificial light on architecture.",                              platforms:[{name:"SHAART",price:52,note:"Free delivery"},{name:"ArtFinder",price:65,note:"+ £12 shipping"},{name:"Rise Art",price:58,note:"3-month min"}], moods:["bold","dynamic","energetic","modern","expressive"],      colours:["yellow","red","blue","black","white","geometric","vibrant"],   lighting:["artificial","bright"],      energy:"high",   subjects:["abstract","geometric","circles","lines","shapes"]}
+];
+
+let filteredArts = [...ARTWORKS];
+let currentFilter = 'all';
+let currentArt = null;
+let wishlist = new Set();
+
+// ── TF-IDF + COSINE SIMILARITY ENGINE ──────────────────────────────────────
+function artTerms(a){
+  return [...a.moods,...a.colours,...a.lighting,...a.subjects,...a.tags,[a.style],[a.energy]].flat().map(t=>t.toLowerCase());
+}
+const VOCAB=[...new Set(ARTWORKS.flatMap(a=>artTerms(a)))];
+const ART_TERM_LISTS=ARTWORKS.map(a=>artTerms(a));
+const IDF={};
+VOCAB.forEach(v=>{const df=ART_TERM_LISTS.filter(d=>d.includes(v)).length;IDF[v]=Math.log((ARTWORKS.length+1)/(df+1))+1;});
+const ART_VECS=ARTWORKS.map((_,i)=>tfidfVec(ART_TERM_LISTS[i]));
+
+function tfidfVec(terms){
+  const tf={};VOCAB.forEach(v=>tf[v]=0);
+  terms.forEach(t=>{if(tf[t]!==undefined)tf[t]++;});
+  const n=terms.length||1;const vec={};
+  VOCAB.forEach(v=>vec[v]=(tf[v]/n)*IDF[v]);return vec;
+}
+function cosine(a,b){
+  let dot=0,na=0,nb=0;
+  VOCAB.forEach(v=>{dot+=(a[v]||0)*(b[v]||0);na+=(a[v]||0)**2;nb+=(b[v]||0)**2;});
+  return na&&nb?dot/(Math.sqrt(na)*Math.sqrt(nb)):0;
+}
+
+const SYN={
+  white:['white','bright wall','pale','ivory','chalk','off white','off-white'],
+  grey:['grey','gray','concrete','slate','graphite','charcoal wall'],
+  blue:['blue','navy','cobalt','teal','cerulean','duck egg','petrol','marine'],
+  green:['green','sage','olive','emerald','moss','eucalyptus','mint'],
+  amber:['amber','honey','golden','mustard','ochre','yellow'],
+  red:['red','crimson','scarlet','burgundy'],pink:['pink','blush','rose','coral','salmon'],
+  purple:['purple','violet','lilac','lavender','plum','aubergine'],
+  brown:['brown','tan','walnut','oak','teak','wood','wooden','timber'],
+  black:['black','dark','ebony'],rust:['rust','terracotta','burnt orange','copper','brick','clay'],
+  warm:['warm','cosy','cozy','inviting','hygge','amber light','golden light'],
+  cool:['cool','cold','north-facing','north facing','grey light'],
+  calm:['calm','serene','peaceful','tranquil','relaxed','quiet','still'],
+  bold:['bold','dramatic','statement','striking','intense'],
+  minimal:['minimal','minimalist','clean','simple','sparse','uncluttered','pared'],
+  zen:['zen','japandi','japanese','wabi','sabi'],
+  bohemian:['bohemian','boho','eclectic','maximalist','layered'],
+  natural:['natural light','window','daylight','oak floor','wood floor'],
+  soft:['soft light','diffused','indirect','gentle light','linen'],
+  dramatic:['dramatic light','directional light','spotlight'],
+  scandi:['scandi','scandinavian','nordic','danish','swedish'],
+};
+
+function parseRoom(text){
+  const low=text.toLowerCase();
+  const terms=low.replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  Object.entries(SYN).forEach(([c,phrases])=>phrases.forEach(ph=>{if(low.includes(ph))terms.push(c);}));
+  if(low.includes('north'))terms.push('cool','diffused','soft');
+  if(low.includes('south'))terms.push('warm','bright','natural');
+  if(low.includes('east'))terms.push('natural','morning','cool');
+  if(low.includes('west'))terms.push('warm','afternoon','golden');
+  return terms;
+}
+
+function mlRecommend(roomTerms, topN=6){
+  const qv=tfidfVec(roomTerms);
+  return ARTWORKS
+    .map((a,i)=>({art:a,score:cosine(qv,ART_VECS[i])}))
+    .sort((a,b)=>b.score-a.score).slice(0,topN);
+}
+
+function whyMatch(art,roomTerms){
+  const sc=art.colours.filter(c=>roomTerms.includes(c)).slice(0,2);
+  const sm=art.moods.filter(m=>roomTerms.includes(m)).slice(0,2);
+  const parts=[];
+  if(sc.length)parts.push(`shares ${sc.join(' & ')} palette`);
+  if(sm.length)parts.push(`echoes ${sm.join(' & ')} mood`);
+  if(!parts.length)parts.push(`${art.style} style suits the space`);
+  return parts.map(p=>p[0].toUpperCase()+p.slice(1)).join(' · ');
+}
+
+// ── ARTWORK GRID ────────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('artGrid');
+  if(!filteredArts.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--warm-gray)">No artworks in this category.</div>`;return;}
+  grid.innerHTML = filteredArts.map(a => `
+    <div class="art-card" onclick="openArtModal(${a.id})">
+      <div class="art-card-img">
+        <img class="art-real-img" src="${a.img}" alt="${a.title}" loading="lazy"/>
+        <div class="card-overlay">
+          <button class="overlay-btn primary" onclick="event.stopPropagation();openArtModal(${a.id})">More info</button>
+          <button class="overlay-btn" onclick="event.stopPropagation();showToast('Rental request sent!')">Rent</button>
+        </div>
+      </div>
+      <button class="wishlist-btn ${wishlist.has(a.id)?'active':''}" id="wb-${a.id}" onclick="event.stopPropagation();toggleWishlist(${a.id})">♡</button>
+      <div class="art-card-body">
+        <div class="artist-row">
+          <div class="avatar ${a.avClass}">${a.initials}</div>
+          <span class="artist-name">${a.artist}</span>
+        </div>
+        <div class="art-title">${a.title}</div>
+        <div class="art-style-tag">${a.style}</div>
+        <div class="price-row">
+          <div class="price-main">£${a.price}<span>/mo</span></div>
+          <span class="compare-badge" onclick="event.stopPropagation();openArtModal(${a.id})">Compare prices →</span>
+        </div>
+        <div class="badge-row">${a.tags.slice(0,3).map(t=>`<span class="badge">${t}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filteredArts = cat==='all' ? [...ARTWORKS] : ARTWORKS.filter(a=>a.style===cat);
+  renderGrid();
+}
+
+function sortArt(val) {
+  const base = currentFilter==='all' ? [...ARTWORKS] : ARTWORKS.filter(a=>a.style===currentFilter);
+  if(val==='price-asc') filteredArts = [...base].sort((a,b)=>a.price-b.price);
+  else if(val==='price-desc') filteredArts = [...base].sort((a,b)=>b.price-a.price);
+  else filteredArts = base;
+  renderGrid();
+}
+
+function openArtModal(id) {
+  const a = ARTWORKS.find(x=>x.id===id);
+  if(!a) return;
+  currentArt = a;
+  document.getElementById('mStyle').textContent = a.style.toUpperCase() + ' · ' + a.year;
+  document.getElementById('mTitle').textContent = a.title;
+  document.getElementById('mArtistName').textContent = 'by ' + a.artist;
+  const av = document.getElementById('mAvatar');
+  av.className = 'avatar ' + a.avClass;
+  av.textContent = a.initials;
+  const imgArea = document.getElementById('mImgArea');
+  imgArea.innerHTML = '<img class="modal-real-img" src="'+a.img+'" alt="'+a.title+'"/>'
+    + '<span class="artic-credit">Public Domain · Wikipedia Commons</span>';
+  document.getElementById('mDesc').textContent = a.desc;
+  document.getElementById('mMeta').innerHTML = `
+    <div class="meta-item"><label>Medium</label><span>${a.medium}</span></div>
+    <div class="meta-item"><label>Size</label><span>${a.size}</span></div>
+    <div class="meta-item"><label>Artist</label><span>${a.artist}</span></div>
+    <div class="meta-item"><label>Year</label><span>${a.year}</span></div>`;
+  const best = Math.min(...a.platforms.map(p=>p.price));
+  const max = Math.max(...a.platforms.map(p=>p.price));
+  document.getElementById('mCompare').innerHTML = a.platforms.map(p=>`
+    <div class="compare-card ${p.price===best?'best-deal':''}">
+      ${p.price===best?'<span class="best-label">Best price</span>':''}
+      <div class="compare-platform">${p.name}</div>
+      <div class="compare-price">£${p.price}</div>
+      <div class="compare-per">/month</div>
+      <div class="compare-note">${p.note}</div>
+    </div>`).join('');
+  document.getElementById('mSavings').textContent = `Save up to £${max-best}/mo by choosing SHAART`;
+  document.getElementById('mTags').innerHTML = a.tags.map(t=>`<span class="badge">${t}</span>`).join('');
+  document.getElementById('aiDescBtn').style.display = 'flex';
+  document.getElementById('aiDescOutput').innerHTML = '';
+  document.getElementById('artModal').classList.add('open');
+}
+
+function closeArtModal() { document.getElementById('artModal').classList.remove('open'); }
+
+function generateAIDesc() {
+  if(!currentArt) return;
+  const a = currentArt;
+  document.getElementById('aiDescBtn').style.display = 'none';
+  const moodStr = a.moods.slice(0,3).join(', ');
+  const colourStr = a.colours.slice(0,3).join(', ');
+  const analysis = `${a.title} operates in a register of ${moodStr} energy, drawing on a palette rooted in ${colourStr} tones. Working in ${a.medium}, ${a.artist} engages with the ${a.style} tradition while maintaining a distinctly personal voice — the piece rewards sustained attention, revealing new relationships between form and surface on each encounter. At ${a.size}, it commands presence without overwhelming; a work that earns its place on the wall.`;
+  document.getElementById('aiDescOutput').innerHTML = `<div class="ai-generated"><strong style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--rust)">✦ Art Analysis</strong><br><br>${analysis}</div>`;
+}
+
+function toggleWishlist(id) {
+  if(wishlist.has(id)) { wishlist.delete(id); showToast('Removed from wishlist'); }
+  else { wishlist.add(id); showToast('Added to wishlist ♡'); }
+  document.getElementById('wishlistCount').textContent = wishlist.size;
+  const btn = document.getElementById('wb-' + id);
+  if(btn) btn.classList.toggle('active', wishlist.has(id));
+}
+
+function wishlistFromModal() {
+  if(currentArt) toggleWishlist(currentArt.id);
+}
+
+function openScan() {
+  document.getElementById('scanOutput').innerHTML = '';
+  document.getElementById('roomTextarea').value = '';
+  resetUploadZone();
+  document.getElementById('scanBackdrop').classList.add('open');
+}
+function closeScan() { document.getElementById('scanBackdrop').classList.remove('open'); }
+
+function resetUploadZone() {
+  document.getElementById('uploadZone').innerHTML = `
+    <input type="file" accept="image/*" id="fileInput" onchange="handleFileUpload(event)"/>
+    <div class="upload-icon">📷</div>
+    <div class="upload-text">Drop a photo here or click to browse</div>
+    <div class="upload-sub">JPG, PNG, HEIC · Max 10MB</div>`;
+}
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('uploadZone').innerHTML = `
+      <img src="${e.target.result}" style="width:100%;height:140px;object-fit:cover;border-radius:2px;margin-bottom:8px"/>
+      <div style="font-size:12px;color:var(--warm-gray)">✓ Photo loaded — add a description below for best results</div>`;
+    if(!document.getElementById('roomTextarea').value)
+      document.getElementById('roomTextarea').value = 'A room with the uploaded photo. ';
+  };
+  reader.readAsDataURL(file);
+}
+
+function useDemoRoom() {
+  document.getElementById('roomTextarea').value = 'A modern Scandinavian living room with white walls, light oak flooring, a slate-grey linen sofa, and large north-facing windows giving soft diffused light. The main wall is about 4 metres wide. The style is calm and minimalist with some warm wood tones.';
+  document.getElementById('uploadZone').innerHTML = `<div style="font-size:32px;margin-bottom:8px">🛋️</div><div style="font-size:13px;font-weight:500">Demo: Modern Scandi living room</div><div style="font-size:11px;color:var(--warm-gray)">White walls · North light · 4m wall</div>`;
+}
+
+function runRecommendation() {
+  const roomDesc = document.getElementById('roomTextarea').value.trim();
+  if(!roomDesc) { showToast('Please describe your room or use the demo room.'); return; }
+  const out = document.getElementById('scanOutput');
+  out.innerHTML = `<div style="padding:24px;text-align:center"><div class="spinner"></div><div class="analyzing-text">Matching artworks to your space…</div></div>`;
+  setTimeout(() => {
+    const roomTerms = parseRoom(roomDesc);
+    const results = mlRecommend(roomTerms, 6);
+    const topScore = results[0]?.score || 0.001;
+    const recsHtml = results.map(r => {
+      const a = r.art;
+      const pct = Math.round((r.score / topScore) * 29) + 70;
+      return `<div class="rec-card" onclick="closeScan();openArtModal(${a.id})">
+        <img class="rec-real-img" src="${a.img}" alt="${a.title}"/>
+        <div class="rec-info">
+          <div class="rec-name">${a.title}</div>
+          <div class="rec-match">${pct}% match</div>
+          <div class="rec-price">from £${a.price}/mo</div>
+          <div class="rec-reason">${whyMatch(a, roomTerms)}</div>
+        </div>
+      </div>`;
+    }).join('');
+    const moodHits = ['calm','cosy','bold','minimal','zen','bohemian','modern','industrial'].filter(m=>roomTerms.includes(m));
+    const colHits  = ['blue','green','white','grey','warm','terracotta','rust','purple','teal','sage','amber'].filter(c=>roomTerms.includes(c));
+    const contextText = `Room detected as ${moodHits.length ? moodHits.slice(0,2).join(' & ') : 'contemporary'} in character${colHits.length ? `, with a ${colHits.slice(0,2).join(' & ')} palette` : ''}. Showing top ${results.length} artwork matches from the collection.`;
+    out.innerHTML = `
+      <div class="room-context-box">${contextText}</div>
+      <div class="rec-section">
+        <div class="rec-label">Recommended for your space</div>
+        <div class="rec-grid">${recsHtml}</div>
+      </div>`;
+  }, 80);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+renderGrid();
+</script>
+</body>
+</html>

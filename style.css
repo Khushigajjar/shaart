@@ -1,12 +1,14 @@
+/* ============================================================
+   SHAART — Combined Stylesheet
+   Merged: main styles + auth modal & nav styles
+   ============================================================ */
+
 /* ── RESET & TOKENS ─────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --ink:#1a1714;--paper:#f5f0e8;--warm-gray:#8c8074;--rust:#b85c2c;--gold:#c8963e;
   --surface:#faf7f2;--border:rgba(26,23,20,.08);--overlay:rgba(26,23,20,.45);
-  --radius:2px;--nav-h:56px;
-}
-:root{
-  --nav-h: 76px;
+  --radius:2px;--nav-h:76px;
 }
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
@@ -26,6 +28,49 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .cart-btn{font-size:16px;position:relative;padding:4px 8px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center}
 .cart-count{font-size:10px;position:absolute;top:0;right:0;background:var(--rust);color:#fff;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-weight:500}
 
+/* ── NAV AUTH CONTROLS ──────────────────────────────────────────────────── */
+#auth-nav{display:flex;align-items:center}
+
+.btn-login{
+  padding:9px 20px;
+  background:#1a1a1a;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-size:0.9rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s;
+}
+.btn-login:hover{background:#333}
+
+.nav-user{display:flex;align-items:center;gap:10px}
+
+/* Unified .avatar — works for both nav profile pic and art-card artist initials */
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:#1a1a1a;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:700;
+  overflow:hidden;flex-shrink:0;
+}
+/* Art-card artist avatars (smaller) */
+.artist-row .avatar{width:26px;height:26px;font-size:9px;font-weight:500}
+.av-blue{background:#dce8f5;color:#1a4a7a}
+.av-green{background:#dceadc;color:#2a5a2a}
+.av-rust{background:#f0e0d0;color:#7a3a1a}
+.av-purple{background:#e8daf0;color:#4a2a7a}
+
+.nav-user .avatar img{width:100%;height:100%;object-fit:cover}
+
+.btn-signout{
+  padding:6px 14px;background:none;
+  border:1.5px solid #ddd;border-radius:7px;
+  font-size:0.82rem;cursor:pointer;color:#666;
+  transition:border-color .2s,color .2s;
+}
+.btn-signout:hover{border-color:#999;color:#222}
+
 /* ── BUTTONS ────────────────────────────────────────────────────────────── */
 .btn-primary{padding:12px 24px;background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;letter-spacing:.04em;border-radius:var(--radius);transition:opacity .2s;display:inline-block;text-align:center}
 .btn-primary:active{opacity:.8}
@@ -34,7 +79,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 
 /* ── HERO ───────────────────────────────────────────────────────────────── */
 .hero{padding:calc(var(--nav-h) + 120px) 16px 60px;max-width:1400px;margin:0 auto}
-
 .hero-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:16px}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,8vw,80px);font-weight:300;line-height:1.05;margin-bottom:20px}
 .hero-title em{font-style:italic;color:var(--rust)}
@@ -54,36 +98,43 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .filter-chip.active,.filter-chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .sort-select{padding:7px 12px;border:.5px solid var(--border);border-radius:100px;font-size:11px;background:transparent;font-family:'DM Sans',sans-serif;color:var(--ink);cursor:pointer;max-width:180px}
 
-/* Art grid — 1 col mobile, 2 col tablet, 3+ col desktop */
 .art-grid{display:grid;grid-template-columns:1fr;gap:20px}
-.art-card{background:var(--surface);border:.5px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative;-webkit-tap-highlight-color:transparent}
+.art-card{background:var(--surface);border:none;border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative;-webkit-tap-highlight-color:transparent;box-shadow: 0 2px 12px rgba(26,23,20,.08), 0 0 0 .5px rgba(26,23,20,.1);}
 .art-card:active{transform:scale(.99)}
 .art-card-img{position:relative;height:220px;overflow:hidden;background:#e8e2d8}
 .art-real-img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 
-/* On mobile show overlay buttons always (no hover) */
 .card-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(transparent,rgba(26,23,20,.7));display:flex;gap:8px;opacity:1;transition:all .3s}
 .overlay-btn{padding:8px 14px;font-size:11px;letter-spacing:.04em;border-radius:var(--radius);font-family:'DM Sans',sans-serif;min-height:36px}
 .overlay-btn.primary{background:var(--paper);color:var(--ink)}
 .overlay-btn:not(.primary){background:rgba(245,240,232,.15);color:var(--paper);border:.5px solid rgba(245,240,232,.3)}
 
-.wishlist-btn{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(245,240,232,.9);display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1;-webkit-tap-highlight-color:transparent}
-.wishlist-btn.active{background:var(--rust);color:#fff}
-.art-card-body{padding:16px}
-.artist-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0}
-.av-blue{background:#dce8f5;color:#1a4a7a}
-.av-green{background:#dceadc;color:#2a5a2a}
-.av-rust{background:#f0e0d0;color:#7a3a1a}
-.av-purple{background:#e8daf0;color:#4a2a7a}
+/* Unified wishlist button — handles both card overlay position & auth-style toggle */
+.wishlist-btn{
+  position:absolute;top:10px;right:10px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(245,240,232,.9);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;z-index:1;
+  cursor:pointer;border:none;padding:0;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .2s,transform .15s,background .2s;
+}
+.wishlist-btn:hover{color:#e74c3c;transform:scale(1.15)}
+.wishlist-btn.active,.wishlist-btn.wishlisted{background:var(--rust);color:#fff}
+
+.art-card-body{padding:16px 16px 20px 16px}
+.artist-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .artist-name{font-size:11px;color:var(--warm-gray)}
 .art-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:4px;line-height:1.3}
-.art-style-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px}
+.art-style-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px}
 .price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .price-main{font-size:18px;font-weight:500}
 .price-main span{font-size:12px;color:var(--warm-gray);font-weight:300}
 .compare-badge{font-size:11px;color:var(--rust);cursor:pointer}
-.badge-row{display:flex;gap:5px;flex-wrap:wrap}
+
+.badge-row{display:flex;gap:5px;flex-wrap:wrap;padding-bottom:4px}
 .badge{font-size:10px;padding:3px 9px;border:.5px solid var(--border);border-radius:100px;color:var(--warm-gray)}
 .bg-warm{background:#e8d8c4}
 .bg-cool{background:#c4d4e8}
@@ -96,7 +147,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .modal-backdrop.open{display:flex}
 .modal{background:var(--paper);border-radius:12px 12px 0 0;width:100%;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column}
 .modal-left{display:none}
-.modal-close{position:fixed;top:12px;right:12px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(26,23,20,.6);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
+
+/* Unified .modal-close — base style; tablet overrides below */
+.modal-close{
+  position:fixed;top:12px;right:12px;z-index:10;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(26,23,20,.6);color:#fff;
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+}
+
 .modal-img-area{width:100%;height:240px;position:relative;overflow:hidden;background:#1a1714;flex-shrink:0}
 .modal-real-img{width:100%;height:100%;object-fit:cover}
 .artic-credit{position:absolute;bottom:8px;left:12px;font-size:9px;color:rgba(245,240,232,.4);letter-spacing:.06em}
@@ -125,17 +184,100 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .modal-actions{display:flex;gap:10px;padding-top:8px}
 .modal-actions .btn-outline,.modal-actions .btn-primary{flex:1;text-align:center;padding:14px 12px;font-size:13px}
 
+/* ── AUTH MODAL ─────────────────────────────────────────────────────────── */
+#auth-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  z-index:9999;align-items:center;justify-content:center;
+}
+#auth-modal.open{display:flex}
+
+.auth-card{
+  background:#fff;border-radius:16px;padding:40px 36px 36px;
+  width:100%;max-width:420px;
+  box-shadow:0 24px 60px rgba(0,0,0,.18);
+  position:relative;font-family:inherit;
+  animation:modalIn .25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn{
+  from{transform:translateY(20px) scale(0.97);opacity:0}
+  to  {transform:translateY(0)    scale(1);   opacity:1}
+}
+
+#modal-close{
+  position:absolute;top:14px;right:18px;
+  background:none;border:none;font-size:22px;cursor:pointer;
+  color:#888;line-height:1;
+}
+#modal-close:hover{color:#222}
+
+.auth-card h2{margin:0 0 6px;font-size:1.5rem;font-weight:700;color:#1a1a1a}
+.auth-card p.auth-sub{margin:0 0 24px;color:#666;font-size:0.9rem}
+
+.auth-tabs{display:flex;gap:0;border-bottom:2px solid #eee;margin-bottom:24px}
+.auth-tab{
+  flex:1;background:none;border:none;padding:10px 0;
+  font-size:0.95rem;font-weight:600;color:#999;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-2px;
+  transition:color .2s,border-color .2s;
+}
+.auth-tab.active{color:#2c2c2c;border-bottom-color:#2c2c2c}
+
+.auth-field{margin-bottom:14px}
+.auth-field label{
+  display:block;font-size:0.82rem;font-weight:600;color:#444;
+  margin-bottom:5px;letter-spacing:.03em;text-transform:uppercase;
+}
+.auth-field input{
+  width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:8px;
+  font-size:0.95rem;color:#1a1a1a;background:#fafafa;
+  outline:none;box-sizing:border-box;transition:border-color .2s,background .2s;
+}
+.auth-field input:focus{border-color:#2c2c2c;background:#fff}
+
+#auth-name-row{display:none}
+
+#auth-error{
+  display:none;background:#fff0f0;border:1px solid #ffcccc;
+  color:#c0392b;border-radius:7px;padding:9px 13px;
+  font-size:0.87rem;margin-bottom:14px;
+}
+
+#auth-submit{
+  width:100%;padding:13px;background:#1a1a1a;color:#fff;
+  border:none;border-radius:9px;font-size:1rem;font-weight:600;
+  cursor:pointer;margin-bottom:14px;transition:background .2s,transform .1s;
+}
+#auth-submit:hover{background:#333}
+#auth-submit:active{transform:scale(0.98)}
+
+.auth-divider{
+  text-align:center;color:#bbb;font-size:0.82rem;margin:4px 0 14px;position:relative;
+}
+.auth-divider::before,.auth-divider::after{
+  content:"";position:absolute;top:50%;width:42%;height:1px;background:#eee;
+}
+.auth-divider::before{left:0}
+.auth-divider::after{right:0}
+
+#btn-google{
+  width:100%;padding:12px;background:#fff;border:1.5px solid #ddd;
+  border-radius:9px;font-size:0.95rem;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  color:#333;transition:background .2s,border-color .2s;
+}
+#btn-google:hover{background:#f5f5f5;border-color:#bbb}
+#btn-google svg{flex-shrink:0}
+
 /* ── SCAN MODAL ─────────────────────────────────────────────────────────── */
 .scan-backdrop{position:fixed;inset:0;background:var(--overlay);z-index:200;display:none;align-items:flex-end;justify-content:center}
 .scan-backdrop.open{display:flex}
 .scan-modal{background:var(--paper);border-radius:12px 12px 0 0;width:100%;max-height:95vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .scan-header{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 0;position:sticky;top:0;background:var(--paper);z-index:5;border-bottom:.5px solid var(--border);padding-bottom:12px}
 .scan-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300}
-.modal-close{width:34px;height:34px;border-radius:50%;background:rgba(26,23,20,.08);color:var(--ink);font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:static}
 .scan-body{padding:16px 16px 40px}
 .scan-sub{font-size:13px;color:var(--warm-gray);margin-bottom:16px;line-height:1.6}
 
-/* Camera zone */
 .camera-zone{position:relative;width:100%;height:260px;background:#111;border-radius:8px;overflow:hidden;margin-bottom:14px;display:flex;align-items:center;justify-content:center}
 .camera-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(245,240,232,.6);text-align:center;padding:20px}
 .camera-icon{width:52px;height:52px;border-radius:50%;background:rgba(245,240,232,.08);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
@@ -143,14 +285,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .camera-idle-sub{font-size:11px;color:rgba(245,240,232,.4);margin-bottom:8px}
 .camera-start-btn{padding:10px 24px;font-size:13px}
 
-/* Corner brackets */
 .camera-corner{position:absolute;width:20px;height:20px;border-color:rgba(245,240,232,.5);border-style:solid;z-index:2;pointer-events:none}
 .camera-corner.tl{top:10px;left:10px;border-width:2px 0 0 2px;border-radius:2px 0 0 0}
 .camera-corner.tr{top:10px;right:10px;border-width:2px 2px 0 0;border-radius:0 2px 0 0}
 .camera-corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px;border-radius:0 0 0 2px}
 .camera-corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0;border-radius:0 0 2px 0}
 
-/* Camera controls */
 .camera-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px;z-index:10;padding:14px 0 18px;background:linear-gradient(transparent,rgba(0,0,0,.55))}
 .cam-btn{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(40,35,30,.7);color:#fff;backdrop-filter:blur(6px);border:2px solid rgba(255,255,255,.3);cursor:pointer;-webkit-tap-highlight-color:rgba(255,255,255,.2);touch-action:manipulation;transition:background .15s}
 .cam-btn:active{background:rgba(255,255,255,.25)}
@@ -159,7 +299,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .capture-ring{width:52px;height:52px;border-radius:50%;background:#fff;pointer-events:none}
 .retake-btn{position:absolute;bottom:10px;right:10px;padding:6px 14px;background:rgba(26,23,20,.7);color:#fff;font-size:12px;border-radius:100px;cursor:pointer;backdrop-filter:blur(4px);z-index:3;-webkit-tap-highlight-color:transparent}
 
-/* Colour readout */
 #colourReadout{margin-bottom:14px}
 .colour-readout-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:8px}
 .swatch-row{display:flex;gap:5px;margin-bottom:6px}
@@ -167,19 +306,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .swatch-pct{font-size:9px;color:rgba(255,255,255,.9);font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .colour-names{font-size:11px;color:var(--warm-gray);margin-bottom:14px;letter-spacing:.03em}
 
-/* Upload fallback */
 .upload-fallback{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .upload-fallback-label{font-size:12px;color:var(--warm-gray);white-space:nowrap}
 .upload-zone-small{display:flex;align-items:center;gap:6px;padding:8px 16px;border:.5px dashed rgba(26,23,20,.25);border-radius:100px;cursor:pointer;font-size:12px;color:var(--warm-gray)}
 .upload-zone-small input{display:none}
 
-/* Room textarea */
 .room-form label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);display:block;margin-bottom:6px}
 .room-textarea{width:100%;padding:12px;border:.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:80px;border-radius:var(--radius)}
 .scan-actions-row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .scan-actions-row .btn-outline,.scan-actions-row .btn-primary{padding:11px 18px;font-size:13px}
 
-/* Scan results */
 .room-context-box{padding:12px 16px;background:rgba(184,92,44,.06);border-left:2px solid var(--rust);font-size:12px;color:var(--warm-gray);margin:16px 0 14px;line-height:1.5}
 .rec-section{margin-top:6px}
 .rec-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:12px}
@@ -193,7 +329,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .rec-price{font-size:11px;color:var(--warm-gray);margin-bottom:1px}
 .rec-reason{font-size:10px;color:var(--warm-gray)}
 
-/* Spinner & toast */
+/* ── SPINNER & TOAST ────────────────────────────────────────────────────── */
 .spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--rust);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .analyzing-text{font-size:13px;color:var(--warm-gray);letter-spacing:.04em}
@@ -204,7 +340,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 #howSection{background:var(--ink);color:var(--paper);padding:70px 16px}
 .how-inner{max-width:900px;margin:0 auto}
 .how-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
-.how-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:rgb(193, 144, 9);margin-bottom:12px}
+.how-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:rgb(193,144,9);margin-bottom:12px}
 .how-step-title{font-size:14px;font-weight:500;margin-bottom:6px}
 .how-step-desc{font-size:12px;color:rgba(245,240,232,.45);line-height:1.6}
 
@@ -242,7 +378,7 @@ footer{background:#111;color:var(--paper);padding:50px 16px 32px}
   .card-overlay{opacity:0}
   .art-card:hover .card-overlay{opacity:1}
   .art-card:hover .art-real-img{transform:scale(1.04)}
-  /* Modal as centred dialog on tablet+ */
+  /* Art detail modal — centred dialog */
   .modal-backdrop{align-items:center;padding:20px}
   .modal{border-radius:4px;width:min(860px,95vw);max-height:88vh;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;flex-direction:unset}
   .modal-left{display:block;position:relative;background:#1a1714}
@@ -250,17 +386,18 @@ footer{background:#111;color:var(--paper);padding:50px 16px 32px}
   .modal-img-area{height:100%;min-height:380px;position:relative}
   .modal-right{overflow-y:auto;padding:36px 32px 36px}
   .modal-title{font-size:28px}
-  /* Scan as centred dialog */
+  /* Scan modal — centred dialog */
   .scan-backdrop{align-items:center;padding:20px}
   .scan-modal{border-radius:4px;width:min(580px,95vw);max-height:88vh}
   .scan-header{position:static;border-bottom:none;padding:24px 28px 0}
-  .modal-close{background:rgba(26,23,20,.08);color:var(--ink);position:static}
   .scan-body{padding:18px 28px 32px}
   .camera-zone{height:280px}
   .how-grid{grid-template-columns:repeat(4,1fr);gap:40px}
   footer{padding:70px 28px 36px}
   .footer-grid{grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
   .footer-bottom{flex-direction:row;justify-content:space-between}
+  /* Auth modal — always centred, no change needed */
+  .auth-card{margin:0}
 }
 
 /* ── DESKTOP — 1024px+ ──────────────────────────────────────────────────── */
@@ -282,5 +419,9 @@ footer{background:#111;color:var(--paper);padding:50px 16px 32px}
   .art-card-img{height:280px}
   #howSection{padding:100px 48px}
   footer{padding:80px 48px 40px}
-  .nav-links{display:flex}
+}
+
+/* ── MOBILE AUTH CARD ───────────────────────────────────────────────────── */
+@media(max-width:480px){
+  .auth-card{padding:32px 22px 28px;margin:16px}
 }

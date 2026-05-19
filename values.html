@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Our Values — SHAART</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+/* ── VALUES PAGE SPECIFIC ───────────────────────────────────────── */
+
+/* Hero */
+.values-hero {
+  padding: calc(var(--nav-h) + 80px) 16px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.values-hero-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  margin-bottom: 16px;
+}
+.values-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+.values-hero-title em {
+  font-style: italic;
+  color: var(--rust);
+}
+.values-hero-sub {
+  font-size: 15px;
+  color: var(--warm-gray);
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+/* Divider */
+.section-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--rust);
+  margin: 48px 16px;
+  opacity: .4;
+}
+
+/* ── VISION STATEMENT ───────────────────────────────────────────── */
+.vision-section {
+  padding: 0 16px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.vision-statement {
+  border-left: 2px solid var(--rust);
+  padding: 20px 24px;
+  background: rgba(184,92,44,.04);
+  margin-bottom: 48px;
+}
+.vision-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.vision-attr {
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+}
+
+/* ── CORE VALUES GRID ───────────────────────────────────────────── */
+.values-section {
+  padding: 0 16px 70px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.values-section-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  margin-bottom: 28px;
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: .5px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.value-card {
+  background: var(--surface);
+  padding: 28px 24px;
+  transition: background .2s;
+}
+.value-card:active { background: var(--paper); }
+.value-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--rust);
+  opacity: .35;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+.value-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.value-desc {
+  font-size: 13px;
+  color: var(--warm-gray);
+  line-height: 1.65;
+}
+
+/* ── HOW WE OPERATE ─────────────────────────────────────────────── */
+.operate-section {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 60px 16px;
+}
+.operate-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.operate-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,.35);
+  margin-bottom: 16px;
+}
+.operate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 40px;
+}
+.operate-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+.operate-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+.op-step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.op-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 36px;
+}
+.op-content {}
+.op-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--paper);
+}
+.op-desc {
+  font-size: 12px;
+  color: rgba(245,240,232,.45);
+  line-height: 1.65;
+}
+
+/* ── WHO WE WORK WITH ───────────────────────────────────────────── */
+.partners-section {
+  padding: 60px 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.partners-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--warm-gray);
+  margin-bottom: 16px;
+}
+.partners-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 36px;
+}
+.partners-title em { font-style: italic; color: var(--rust); }
+
+.partner-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: .5px solid var(--border);
+}
+.partner-tab {
+  padding: 10px 18px;
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--warm-gray);
+  border-bottom: 1.5px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: all .2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.partner-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--rust);
+}
+
+.partner-panels {}
+.partner-panel { display: none; }
+.partner-panel.active { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+.partner-card {
+  display: flex;
+  gap: 16px;
+  padding: 18px;
+  border: .5px solid var(--border);
+  border-radius: var(--radius);
+  align-items: flex-start;
+  background: var(--surface);
+}
+.partner-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(184,92,44,.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.partner-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.partner-desc {
+  font-size: 12px;
+  color: var(--warm-gray);
+  line-height: 1.55;
+}
+
+/* ── APPROACH / MANIFESTO ───────────────────────────────────────── */
+.approach-section {
+  background: var(--rust);
+  color: var(--paper);
+  padding: 60px 16px;
+}
+.approach-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.approach-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,.6);
+  margin-bottom: 20px;
+}
+.approach-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+.approach-body {
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(245,240,232,.75);
+  max-width: 580px;
+  margin: 0 auto 32px;
+}
+.approach-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.approach-pill {
+  padding: 7px 16px;
+  border: .5px solid rgba(245,240,232,.35);
+  border-radius: 100px;
+  font-size: 11px;
+  letter-spacing: .05em;
+  color: rgba(245,240,232,.85);
+}
+
+/* ── CTA STRIP ──────────────────────────────────────────────────── */
+.values-cta {
+  padding: 50px 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.values-cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 300;
+}
+.values-cta-title em { font-style: italic; color: var(--rust); }
+.values-cta-sub {
+  font-size: 13px;
+  color: var(--warm-gray);
+  max-width: 420px;
+  line-height: 1.6;
+}
+.values-cta-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ── TABLET ─────────────────────────────────────────────────────── */
+@media(min-width:600px) {
+  .values-hero { padding: calc(var(--nav-h) + 80px) 28px 60px; }
+  .section-divider { margin: 48px 28px; }
+  .vision-section { padding: 0 28px 60px; }
+  .values-section { padding: 0 28px 70px; }
+  .values-grid { grid-template-columns: 1fr 1fr; }
+  .operate-section { padding: 80px 28px; }
+  .operate-steps { grid-template-columns: 1fr 1fr; }
+  .partners-section { padding: 80px 28px; }
+  .partner-panel.active { grid-template-columns: 1fr 1fr; }
+  .approach-section { padding: 80px 28px; }
+  .values-cta { padding: 60px 28px; flex-direction: row; align-items: center; justify-content: space-between; gap: 40px; }
+  .values-cta-group {}
+  .values-cta-btns { margin-top: 0; flex-direction: column; align-items: flex-end; }
+}
+
+/* ── DESKTOP ─────────────────────────────────────────────────────── */
+@media(min-width:1024px) {
+  .values-hero { padding: calc(var(--nav-h) + 120px) 48px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .section-divider { margin: 0 48px 80px; }
+  .vision-section { padding: 0 48px 80px; }
+  .values-section { padding: 0 48px 80px; }
+  .values-grid { grid-template-columns: repeat(3, 1fr); }
+  .value-card:hover { background: var(--paper); }
+  .operate-section { padding: 100px 48px; }
+  .operate-steps { grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .partners-section { padding: 100px 48px; }
+  .partner-panel.active { grid-template-columns: 1fr 1fr 1fr; }
+  .approach-section { padding: 100px 48px; }
+  .values-cta { padding: 80px 48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" href="index.html">SH<em>AA</em>RT</a>
+  <div class="nav-links">
+    <a href="index.html">Browse Art</a>
+    <a href="#howSection" style="color:var(--ink)">Our Values</a>
+  </div>
+  <div class="nav-actions">
+    <a class="btn-scan btn-outline" href="index.html">← Back to Gallery</a>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="values-hero">
+  <div>
+    <p class="values-hero-label">Our Identity</p>
+    <h1 class="values-hero-title">Art should<br/><em>adapt to people,</em><br/>not the opposite.</h1>
+  </div>
+  <div>
+    <p class="values-hero-sub">SHAART is an AI-powered art rental platform connecting independent artists, businesses, and individuals. We believe in making art accessible, flexible, and alive — for everyone.</p>
+  </div>
+</section>
+
+
+
+<!-- ── VISION STATEMENT ──────────────────────────────────────── -->
+<section class="vision-section">
+  <div class="vision-statement">
+    <p class="vision-quote">"SHAART is an art rental platform powered by a community of artists that uses AI-powered tools to enable everyone to access art with flexible rentals."</p>
+    <p class="vision-attr">SHAART Mission Statement</p>
+  </div>
+</section>
+
+<!-- ── CORE VALUES ───────────────────────────────────────────── -->
+<section class="values-section">
+  <p class="values-section-label">What we stand for</p>
+  <div class="values-grid">
+
+    <div class="value-card">
+      <div class="value-num">01</div>
+      <h3 class="value-title">Accessibility First</h3>
+      <p class="value-desc">Art has always been locked behind high prices and exclusive ownership. We believe experiencing original art should be a right, not a privilege — available to renters, offices, hotels, and anyone who wants to live beautifully.</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-num">02</div>
+      <h3 class="value-title">Flexibility Over Ownership</h3>
+      <p class="value-desc">The traditional model forces a permanent decision. SHAART lets spaces evolve — rotate artworks monthly, refresh a room's mood, adapt to seasons or brand identity. Art should move with life, not freeze it.</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-num">03</div>
+      <h3 class="value-title">AI-Powered Personalisation</h3>
+      <p class="value-desc">Every space has a personality. Our AI reads your room — its colours, mood, and character — and curates artworks that genuinely fit. Not generic suggestions. A real match, unique to your space.</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-num">04</div>
+      <h3 class="value-title">Supporting Independent Artists</h3>
+      <p class="value-desc">We partner with emerging and independent artists who deserve consistent income and visibility. Every rental on SHAART directly supports a creator — giving them a sustainable way to share their work with the world.</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-num">05</div>
+      <h3 class="value-title">Designed for Accessibility</h3>
+      <p class="value-desc">We pursue B Corp values in everything we build — ethical partnerships, transparent pricing, and a platform designed to remove barriers rather than create them. Art rental should be simpler, not harder.</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-num">06</div>
+      <h3 class="value-title">Art That Is Alive</h3>
+      <p class="value-desc">Static decoration is a thing of the past. SHAART believes spaces should breathe and change — telling new stories each season, reflecting how people grow, and keeping the experience of art genuinely exciting.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── HOW WE OPERATE ─────────────────────────────────────────── -->
+<section class="operate-section" id="howSection">
+  <div class="operate-inner">
+    <p class="operate-label">How we work</p>
+    <h2 class="operate-title">From artist studio<br/><em>to your space</em></h2>
+    <div class="operate-steps">
+
+      <div class="op-step">
+        <div class="op-num">1</div>
+        <div class="op-content">
+          <p class="op-title">Curated Artist Network</p>
+          <p class="op-desc">We partner with independent artists and certified curators across the UK and Europe — vetting every piece for quality, originality, and story.</p>
+        </div>
+      </div>
+
+      <div class="op-step">
+        <div class="op-num">2</div>
+        <div class="op-content">
+          <p class="op-title">AI Room Matching</p>
+          <p class="op-desc">Our AI reads your room's colours, mood, and style — then recommends artworks that genuinely fit your space, not just popular pieces.</p>
+        </div>
+      </div>
+
+      <div class="op-step">
+        <div class="op-num">3</div>
+        <div class="op-content">
+          <p class="op-title">Flexible Rental Plans</p>
+          <p class="op-desc">Choose monthly, quarterly, or custom durations. Rotate whenever you want. No long-term commitment, no ownership headaches, no surprises.</p>
+        </div>
+      </div>
+
+      <div class="op-step">
+        <div class="op-num">4</div>
+        <div class="op-content">
+          <p class="op-title">Delivery & Collection</p>
+          <p class="op-desc">We handle everything — professional packaging, insured delivery, and collection when you're ready to swap. You just enjoy the art.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── WHO WE WORK WITH ──────────────────────────────────────── -->
+<section class="partners-section">
+  <p class="partners-label">Our community</p>
+  <h2 class="partners-title">Who we<br/><em>work with</em></h2>
+
+  <div class="partner-tabs">
+    <button class="partner-tab active" onclick="showTab('b2c')">Individuals</button>
+    <button class="partner-tab" onclick="showTab('b2b')">Businesses</button>
+    <button class="partner-tab" onclick="showTab('artists')">Artists</button>
+  </div>
+
+  <div class="partner-panels">
+
+    <div class="partner-panel active" id="panel-b2c">
+      <div class="partner-card">
+        <div class="partner-icon">🏙️</div>
+        <div>
+          <p class="partner-name">Young Urban Professionals</p>
+          <p class="partner-desc">Renters and movers who want a beautiful home without the commitment of buying art. Affordable monthly plans, easy rotation, zero hassle.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🎨</div>
+        <div>
+          <p class="partner-name">Art Enthusiasts</p>
+          <p class="partner-desc">People who love art but want to experience a wide variety — not commit to one piece forever. Discover new artists every season.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🛋️</div>
+        <div>
+          <p class="partner-name">Interior Design Lovers</p>
+          <p class="partner-desc">Curators of their own space. SHAART lets them match art to every design update — seasonally, or whenever the mood changes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="partner-panel" id="panel-b2b">
+      <div class="partner-card">
+        <div class="partner-icon">🏢</div>
+        <div>
+          <p class="partner-name">Offices & Coworking Spaces</p>
+          <p class="partner-desc">Build a workplace that reflects brand identity and inspires teams. Rotate quarterly to keep environments fresh and motivating.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🏨</div>
+        <div>
+          <p class="partner-name">Hotels & Hospitality</p>
+          <p class="partner-desc">Create memorable atmospheres guests talk about. Rotate artwork seasonally without the cost and risk of permanent acquisition.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🎪</div>
+        <div>
+          <p class="partner-name">Event Companies</p>
+          <p class="partner-desc">Short-term immersive decoration for launches, exhibitions, and experiences — with professional installation and collection included.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="partner-panel" id="panel-artists">
+      <div class="partner-card">
+        <div class="partner-icon">🖌️</div>
+        <div>
+          <p class="partner-name">Emerging Artists</p>
+          <p class="partner-desc">Gain consistent income and visibility without relying on one-time sales. Your work reaches real spaces and real people, month after month.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">🏛️</div>
+        <div>
+          <p class="partner-name">Established Creators</p>
+          <p class="partner-desc">Expand your reach beyond galleries. SHAART places your art in homes, offices, and hotels — building a living portfolio across the UK.</p>
+        </div>
+      </div>
+      <div class="partner-card">
+        <div class="partner-icon">✅</div>
+        <div>
+          <p class="partner-name">Certified Partners</p>
+          <p class="partner-desc">Curators and designers who help us build the collection — ensuring every piece on SHAART meets our quality and authenticity standards.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── MANIFESTO ──────────────────────────────────────────────── -->
+<section class="approach-section">
+  <div class="approach-inner">
+    <p class="approach-label">Our Approach</p>
+    <h2 class="approach-title">Art that moves with you</h2>
+    <p class="approach-body">We don't believe art should be a permanent, expensive decision. We believe it should be alive — changing as you change, growing as your space grows. SHAART exists to make that possible for everyone: renters, offices, hotels, and anyone who wants their world to feel genuinely curated.</p>
+    <div class="approach-pills">
+      <span class="approach-pill">AI-Powered Curation</span>
+      <span class="approach-pill">Flexible Rentals</span>
+      <span class="approach-pill">Independent Artists</span>
+      <span class="approach-pill">No Long Commitments</span>
+      <span class="approach-pill">Designed for Accessibility</span>
+      <span class="approach-pill">Ethical Partnerships</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────── -->
+<section class="values-cta">
+  <div class="values-cta-group">
+    <h3 class="values-cta-title">Ready to bring<br/><em>art into your space?</em></h3>
+    <p class="values-cta-sub">Browse our curated collection or scan your room to find artworks that truly match your space.</p>
+  </div>
+  <div class="values-cta-btns">
+    <a class="btn-primary" href="index.html">Browse the Collection</a>
+    <a class="btn-outline" href="index.html#scan">Scan My Space</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">SH<em>AA</em>RT</div>
+      <p class="footer-tagline">Art rental, reimagined.<br/>Flexible. Personal. Alive.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="index.html">Browse Art</a>
+      <a href="values.html">Our Values</a>
+      <a href="index.html#howSection">How It Works</a>
+    </div>
+    <div class="footer-col">
+      <h4>For Artists</h4>
+      <a href="#">Join as Artist</a>
+      <a href="#">Artist Guidelines</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 SHAART. All rights reserved.</span>
+    <span>Making art accessible, flexible and alive.</span>
+  </div>
+</footer>
+
+<script>
+function showTab(tab) {
+  document.querySelectorAll('.partner-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.partner-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+</script>
+</body>
+</html>

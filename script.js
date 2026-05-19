@@ -198,7 +198,7 @@ function wishlistFromModal() {
 }
 
 
-function x() {
+function openScan() {
   document.getElementById('scanOutput').innerHTML = '';
   document.getElementById('scanOutput').innerHTML = '';
   document.getElementById('roomTextarea').value = '';
@@ -445,14 +445,14 @@ function runRecommendation() {
       const a = r.art;
       const pct = Math.round((r.score / topScore) * 29) + 70;
       return `<div class="rec-card" onclick="closeScan();openArtModal(${a.id})">
-        <img class="rec-real-img" src="images/${a.img}" alt="${a.title}"/>
-        <div class="rec-info">
-          <div class="rec-name">${a.title}</div>
-          <div class="rec-match">${pct}% match</div>
-          <div class="rec-price">from £${a.price}/mo</div>
-          <div class="rec-reason">${whyMatch(a, roomTerms)}
-        </div>
-      </div>`;
+  <img class="rec-real-img" src="images/${a.img}" alt="${a.title}"/>
+  <div class="rec-info">
+    <div class="rec-name">${a.title}</div>
+    <div class="rec-match">${pct}% match</div>
+    <div class="rec-price">from £${a.price}/mo</div>
+    <div class="rec-reason">${whyMatch(a, roomTerms)}</div>
+  </div>
+</div>`;
     }).join('');
     const moodHits = ['calm','cosy','bold','minimal','zen','bohemian','modern','industrial'].filter(m=>roomTerms.includes(m));
     const colHits  = ['blue','green','white','grey','warm','terracotta','rust','purple','teal','sage','amber'].filter(c=>roomTerms.includes(c));

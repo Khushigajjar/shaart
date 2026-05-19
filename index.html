@@ -11,20 +11,19 @@
 <body>
 
 <nav>
-  <div class="nav-logo">
-    <img src="images/logo.png" alt="SHAART logo" width="50" height="50"/>
-  </div>
+  <a class="nav-logo" href="index.html">SH<em>AA</em>RT</a>
   <div class="nav-links">
     <a onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Browse Art</a>
     <a onclick="document.getElementById('howSection').scrollIntoView({behavior:'smooth'})">How it Works</a>
+    <a href="values.html">Our Values</a>
   </div>
   <div class="nav-actions">
     <button class="btn-scan" onclick="openScan()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
       Scan your space
     </button>
+    <div id="auth-nav"></div>
   </div>
-  <div id="auth-nav"></div>
 </nav>
 
 <!-- HERO -->

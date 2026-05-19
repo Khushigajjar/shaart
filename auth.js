@@ -216,22 +216,23 @@ function refreshWishlistUI(wishlist) {
   });
 }
 
+let authReady = false;
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Show neutral state instead of flashing login button
-  const nav = document.getElementById("auth-nav");
-  if(nav) nav.innerHTML = `<span style="font-size:12px;color:var(--warm-gray)">...</span>`;
+  renderGuestNav(); // show login immediately
   bindModal();
 });
 
 
 onAuthStateChanged(auth, async (user) => {
+  authReady = true;
+
   if (user) {
     let wishlist = [];
     try {
       wishlist = await getWishlist(user.uid);
-    } catch (e) {
-      console.warn("Wishlist unavailable (offline):", e.message);
-    }
+    } catch (e) {}
+
     window.__shaartWishlist = wishlist;
     renderUserNav(user);
     refreshWishlistUI(wishlist);
